@@ -1,0 +1,2712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GemgenAI - AI智能分析</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg: #FFFFFF;
+            --color-bg-secondary: #F5F5F5;
+            --color-border: #E5E5E5;
+            --color-text: #0A0A0A;
+            --color-text-secondary: #525252;
+            --color-text-muted: #A3A3A3;
+            --color-youtube: #FF0000;
+            --color-tiktok: #000000;
+            --color-facebook: #1877F2;
+            --color-success: #22C55E;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ================================
+           侧边栏导航
+           ================================ */
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: var(--color-bg);
+            border-right: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 8px;
+            margin-bottom: 40px;
+        }
+
+        .logo-mark {
+            width: 34px;
+            height: 34px;
+            background: var(--color-text);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-mark span {
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-text);
+            letter-spacing: -0.3px;
+        }
+
+        .nav {
+            flex: 1;
+        }
+
+        .nav-section {
+            margin-bottom: 32px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 12px;
+            margin-bottom: 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-bottom: 4px;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+        }
+
+        .nav-item.active {
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+            font-weight: 600;
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .sidebar-footer {
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .user-menu:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--color-text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .user-plan {
+            font-size: 11px;
+            color: var(--color-text-muted);
+        }
+
+        /* ================================
+           主内容区
+           ================================ */
+        .main {
+            margin-left: 220px;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ================================
+           左侧：分析记录列表
+           ================================ */
+        .records-panel {
+            width: 320px;
+            min-width: 200px;
+            max-width: 500px;
+            border-right: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            position: relative;
+        }
+
+        .records-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .records-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .records-title svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* 拖动调整宽度的手柄 */
+        .resize-handle {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: transparent;
+            cursor: col-resize;
+            transition: background 0.15s;
+            z-index: 10;
+        }
+
+        .resize-handle:hover,
+        .resize-handle.dragging {
+            background: var(--color-text);
+        }
+
+        .records-panel.collapsed {
+            width: 0 !important;
+            min-width: 0 !important;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .records-panel.collapsed .records-header,
+        .records-panel.collapsed .records-search,
+        .records-panel.collapsed .filter-section,
+        .records-panel.collapsed .records-list {
+            display: none;
+        }
+
+        /* 折叠时显示的展开按钮 */
+        .expand-btn {
+            position: fixed;
+            left: 220px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 48px;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-left: none;
+            border-radius: 0 6px 6px 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 50;
+            transition: all 0.15s;
+        }
+
+        .expand-btn:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .expand-btn svg {
+            width: 14px;
+            height: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        .records-panel.collapsed + .detail-panel .expand-btn {
+            display: flex;
+        }
+
+        .records-search {
+            padding: 12px 20px;
+        }
+
+        .search-input-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--color-bg-secondary);
+            border-radius: 8px;
+        }
+
+        .search-input-wrap svg {
+            width: 16px;
+            height: 16px;
+            color: var(--color-text-muted);
+        }
+
+        .search-input-wrap input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            color: var(--color-text);
+            outline: none;
+        }
+
+        .search-input-wrap input::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        /* 筛选标签 */
+        .filter-section {
+            padding: 16px 20px;
+        }
+
+        .filter-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            margin-bottom: 10px;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .filter-tag {
+            padding: 5px 10px;
+            border-radius: 14px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg);
+            color: var(--color-text-secondary);
+        }
+
+        .filter-tag:hover {
+            border-color: var(--color-text);
+            color: var(--color-text);
+        }
+
+        .filter-tag.active {
+            background: var(--color-text);
+            border-color: var(--color-text);
+            color: white;
+        }
+
+        /* 记录列表 */
+        .records-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .record-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 4px 12px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .record-item:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .record-item.active {
+            background: var(--color-bg-secondary);
+        }
+
+        .record-thumb {
+            width: 72px;
+            min-width: 72px;
+            height: 54px;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .record-thumb .badge {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            padding: 2px 6px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+        }
+
+        .record-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .record-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            line-height: 1.4;
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .record-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--color-text-muted);
+        }
+
+        .record-meta .divider {
+            color: var(--color-border);
+        }
+
+        /* ================================
+           右侧：分析详情
+           ================================ */
+        .detail-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            height: 100vh;
+        }
+
+        /* 顶部操作栏 - 只有语言切换 */
+        .detail-header {
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .lang-switch {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            background: var(--color-bg);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .lang-switch:hover {
+            border-color: var(--color-text);
+            color: var(--color-text);
+        }
+
+        .lang-switch svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* 视频信息区 */
+        .video-hero {
+            padding: 32px;
+            display: flex;
+            gap: 24px;
+        }
+
+        .video-cover {
+            width: 200px;
+            min-width: 200px;
+            height: 130px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-cover .play-btn {
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        .video-cover .play-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .video-cover .play-btn svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-text);
+            margin-left: 3px;
+        }
+
+        .video-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .video-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-text);
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .video-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--color-text-muted);
+            margin-bottom: 14px;
+        }
+
+        .video-meta-row span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .video-meta-row svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .video-stats {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-item svg {
+            width: 18px;
+            height: 18px;
+            color: var(--color-text-muted);
+        }
+
+        .stat-item .value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        /* 操作按钮 - 在数据下方 */
+        .video-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background: #F3F4F6;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-secondary:hover {
+            background: #E5E7EB;
+        }
+
+        .btn-primary {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background: #F3F4F6;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-primary:hover {
+            background: #E5E7EB;
+        }
+
+        /* 分析者信息 */
+        .analyzer-section {
+            padding: 16px 32px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .analyzer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .analyzer-avatar svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+
+        .analyzer-info {
+            flex: 1;
+        }
+
+        .analyzer-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .analyzer-desc {
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        /* 对话结果展示区 */
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        .chat-empty {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+        }
+
+        .chat-empty-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--color-bg-secondary);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .chat-empty-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--color-text-muted);
+        }
+
+        .chat-empty-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .chat-empty-desc {
+            font-size: 13px;
+            color: var(--color-text-muted);
+        }
+
+        /* 对话消息 */
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* 结果卡片容器 */
+        .result-card-wrap {
+            max-width: 400px;
+        }
+
+        /* 结果卡片 - 简化扁平风格 */
+        .result-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-radius: 10px;
+            border: 1px solid var(--color-border);
+            padding: 14px 18px;
+            background: var(--color-bg);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .result-card:hover {
+            border-color: var(--color-text-muted);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        /* 左侧图标 */
+        .result-card-icon {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-card-icon svg {
+            width: 24px;
+            height: 24px;
+            color: #9CA3AF;
+        }
+
+        /* 右侧内容 */
+        .result-card-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .result-card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .result-card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .result-card-meta {
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        /* 卡片外操作栏 */
+        .result-card-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-top: 10px;
+        }
+
+        .result-card-action {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+
+        .result-card-action:hover {
+            color: var(--color-text);
+        }
+
+        .result-card-action svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* 自然文字输出 */
+        .chat-text-output {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--color-text);
+            max-width: 720px;
+        }
+
+        .chat-text-output p {
+            margin-bottom: 16px;
+        }
+
+        .chat-text-output p:last-child {
+            margin-bottom: 0;
+        }
+
+        .chat-text-output strong {
+            font-weight: 600;
+        }
+
+        .chat-text-output ul {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        .chat-text-output li {
+            margin-bottom: 8px;
+        }
+
+        /* AI消息操作栏 */
+        .ai-message-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 16px;
+            padding-top: 12px;
+        }
+
+        .ai-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: color 0.15s;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .ai-action-btn:hover {
+            color: var(--color-text);
+        }
+
+        .ai-action-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* 用户消息 - 右对齐，边框样式 */
+        .user-message {
+            display: flex;
+            justify-content: flex-end;
+            margin: 40px 0;
+        }
+
+        .user-message-bubble {
+            max-width: 70%;
+            padding: 14px 18px;
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--color-text);
+            background: var(--color-bg);
+        }
+
+        /* AI消息块 */
+        .ai-message {
+            margin-bottom: 40px;
+        }
+
+        .ai-message-lead {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* 用户消息 - 右对齐，边框样式 */
+        .user-message {
+            display: flex;
+            justify-content: flex-end;
+            margin: 40px 0;
+        }
+
+        /* ================================
+           报告详情分屏视图
+           ================================ */
+        .report-detail-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 220px;
+            right: 0;
+            bottom: 0;
+            background: var(--color-bg);
+            z-index: 200;
+        }
+
+        .report-detail-overlay.active {
+            display: flex;
+        }
+
+        /* 左侧对话区 */
+        .report-detail-left {
+            width: 50%;
+            min-width: 300px;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: var(--color-bg);
+        }
+
+        .report-detail-left-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .report-detail-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+
+        .report-detail-back:hover {
+            color: var(--color-text);
+        }
+
+        .report-detail-back svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .report-detail-left-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .report-detail-left-input {
+            padding: 16px 24px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        /* 中间拖动条 */
+        .report-detail-resizer {
+            width: 6px;
+            background: var(--color-border);
+            cursor: col-resize;
+            transition: background 0.15s;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .report-detail-resizer::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 40px;
+            background: var(--color-text-muted);
+            border-radius: 2px;
+            opacity: 0.5;
+        }
+
+        .report-detail-resizer:hover {
+            background: var(--color-text-muted);
+        }
+
+        .report-detail-resizer:hover::after {
+            opacity: 1;
+        }
+
+        .report-detail-resizer.dragging {
+            background: var(--color-text);
+        }
+
+        /* 右侧报告预览区 */
+        .report-detail-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #F8F9FA;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .report-detail-right-header {
+            padding: 12px 24px;
+            background: var(--color-bg);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .report-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .report-tab {
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text-muted);
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .report-tab:hover {
+            color: var(--color-text);
+            background: var(--color-bg-secondary);
+        }
+
+        .report-tab.active {
+            color: var(--color-text);
+            background: var(--color-bg-secondary);
+        }
+
+        .report-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .report-action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--color-text-muted);
+        }
+
+        .report-action-btn:hover {
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+        }
+
+        .report-action-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .report-detail-right-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 报告内容 - 自适应 */
+        .report-document {
+            background: var(--color-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            padding: 48px 56px;
+            box-sizing: border-box;
+        }
+
+        /* 窄屏时减少内边距 */
+        @media (max-width: 600px) {
+            .report-document {
+                padding: 32px 24px;
+            }
+        }
+
+        .report-document h1 {
+            font-size: clamp(20px, 4vw, 28px);
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 8px;
+            line-height: 1.3;
+            word-wrap: break-word;
+        }
+
+        .report-document h2 {
+            font-size: clamp(16px, 3vw, 20px);
+            font-weight: 700;
+            color: #2563EB;
+            margin-bottom: 16px;
+        }
+
+        .report-document .subtitle {
+            font-size: 15px;
+            color: var(--color-text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .report-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .report-stat-card {
+            flex: 1 1 140px;
+            min-width: 120px;
+            padding: 20px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+        }
+
+        .report-stat-card.highlight {
+            background: #ECFDF5;
+            border-color: #A7F3D0;
+        }
+
+        .report-stat-label {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            margin-bottom: 8px;
+        }
+
+        .report-stat-value {
+            font-size: clamp(20px, 3vw, 28px);
+            font-weight: 700;
+            color: #2563EB;
+        }
+
+        .report-stat-card.highlight .report-stat-value {
+            color: #059669;
+        }
+
+        .report-stat-sub {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+
+        .report-stat-sub.positive {
+            color: #059669;
+        }
+
+        /* 表格 - 自适应 */
+        .report-table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .report-table {
+            width: 100%;
+            min-width: 400px;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .report-table th {
+            text-align: left;
+            padding: 12px 16px;
+            background: #F8F9FA;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            border-bottom: 1px solid var(--color-border);
+            white-space: nowrap;
+        }
+
+        .report-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+
+        .report-table .rank {
+            font-weight: 600;
+            color: #2563EB;
+        }
+
+        /* ================================
+           分享对话弹窗 - 扁平欧美风格
+           ================================ */
+        .share-dialog-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-dialog-overlay.active {
+            display: flex;
+        }
+
+        .share-dialog {
+            background: #FFFFFF;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            transition: all 0.2s ease;
+        }
+
+        /* 方案A: 标准尺寸 720px */
+        .share-dialog.size-a {
+            width: 720px;
+            max-width: 90vw;
+            max-height: 70vh;
+        }
+
+        /* 方案B: 中等尺寸 820px */
+        .share-dialog.size-b {
+            width: 820px;
+            max-width: 90vw;
+            max-height: 75vh;
+        }
+
+        /* 方案C: 大尺寸 920px */
+        .share-dialog.size-c {
+            width: 920px;
+            max-width: 92vw;
+            max-height: 80vh;
+        }
+
+        .share-dialog-header {
+            padding: 20px 24px 16px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .share-dialog.size-b .share-dialog-header,
+        .share-dialog.size-c .share-dialog-header {
+            padding: 24px 28px 18px;
+        }
+
+        .share-dialog-header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .share-dialog-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #111;
+            letter-spacing: -0.01em;
+        }
+
+        .share-dialog.size-b .share-dialog-title,
+        .share-dialog.size-c .share-dialog-title {
+            font-size: 16px;
+        }
+
+        .share-dialog-subtitle {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .share-dialog.size-b .share-dialog-subtitle,
+        .share-dialog.size-c .share-dialog-subtitle {
+            font-size: 13px;
+        }
+
+        .share-dialog-close {
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            transition: color 0.15s;
+            padding: 0;
+        }
+
+        .share-dialog-close:hover {
+            color: #333;
+        }
+
+        .share-dialog-close svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .share-dialog-content {
+            flex: 1;
+            overflow-y: auto;
+            border-top: 1px solid #F0F0F0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        /* 对话预览列表 */
+        .share-message-list {
+            padding: 4px 0;
+        }
+
+        .share-message-item {
+            display: flex;
+            gap: 12px;
+            padding: 14px 24px;
+        }
+
+        .share-dialog.size-b .share-message-item,
+        .share-dialog.size-c .share-message-item {
+            padding: 16px 28px;
+            gap: 14px;
+        }
+
+        .share-message-checkbox {
+            width: 16px;
+            height: 16px;
+            min-width: 16px;
+            border: 1.5px solid #D0D0D0;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s;
+            background: #FFF;
+            margin-top: 2px;
+        }
+
+        .share-message-checkbox:hover {
+            border-color: #999;
+        }
+
+        .share-message-checkbox.checked {
+            background: #2563EB;
+            border-color: #2563EB;
+        }
+
+        .share-message-checkbox.checked svg {
+            display: block;
+        }
+
+        .share-message-checkbox svg {
+            width: 10px;
+            height: 10px;
+            color: white;
+            display: none;
+        }
+
+        .share-message-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .share-message-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .share-dialog.size-b .share-message-text,
+        .share-dialog.size-c .share-message-text {
+            font-size: 14px;
+            line-height: 1.65;
+        }
+
+        .share-message-text p {
+            margin-bottom: 6px;
+        }
+
+        .share-message-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 用户消息样式 */
+        .share-message-item.user .share-message-content {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .share-message-item.user .share-message-text {
+            background: #FAFAFA;
+            border: 1px solid #E8E8E8;
+            border-radius: 8px;
+            padding: 10px 14px;
+            max-width: 85%;
+        }
+
+        .share-dialog.size-b .share-message-item.user .share-message-text,
+        .share-dialog.size-c .share-message-item.user .share-message-text {
+            padding: 12px 16px;
+        }
+
+        /* 卡片预览 - 极简扁平 */
+        .share-card-preview {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #E8E8E8;
+            border-radius: 6px;
+            padding: 10px 14px;
+            background: #FAFAFA;
+        }
+
+        .share-dialog.size-b .share-card-preview,
+        .share-dialog.size-c .share-card-preview {
+            gap: 12px;
+            padding: 12px 16px;
+        }
+
+        .share-card-icon {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-card-icon svg {
+            width: 18px;
+            height: 18px;
+            color: #888;
+        }
+
+        .share-dialog.size-b .share-card-icon svg,
+        .share-dialog.size-c .share-card-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .share-card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .share-card-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .share-dialog.size-b .share-card-title,
+        .share-dialog.size-c .share-card-title {
+            font-size: 14px;
+        }
+
+        .share-card-meta {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .share-dialog.size-b .share-card-meta,
+        .share-dialog.size-c .share-card-meta {
+            font-size: 12px;
+        }
+
+        /* 弹窗底部 */
+        .share-dialog-footer {
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .share-dialog.size-b .share-dialog-footer,
+        .share-dialog.size-c .share-dialog-footer {
+            padding: 16px 28px;
+        }
+
+        .share-footer-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .share-select-all {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .share-dialog.size-b .share-select-all,
+        .share-dialog.size-c .share-select-all {
+            font-size: 13px;
+        }
+
+        .share-select-all-checkbox {
+            width: 14px;
+            height: 14px;
+            border: 1.5px solid #D0D0D0;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s;
+            background: #FFF;
+        }
+
+        .share-select-all-checkbox.checked {
+            background: #2563EB;
+            border-color: #2563EB;
+        }
+
+        .share-select-all-checkbox.checked svg {
+            display: block;
+        }
+
+        .share-select-all-checkbox svg {
+            width: 9px;
+            height: 9px;
+            color: white;
+            display: none;
+        }
+
+        .share-permission {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .share-dialog.size-b .share-permission,
+        .share-dialog.size-c .share-permission {
+            font-size: 13px;
+        }
+
+        .share-permission input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            accent-color: #2563EB;
+            margin: 0;
+        }
+
+        .share-footer-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .share-btn-more {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #E0E0E0;
+            border-radius: 6px;
+            background: #FFF;
+            font-size: 13px;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-btn-more:hover {
+            border-color: #CCC;
+            color: #555;
+        }
+
+        .share-btn-primary {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background: #111;
+            font-size: 12px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .share-dialog.size-b .share-btn-primary,
+        .share-dialog.size-c .share-btn-primary {
+            padding: 9px 18px;
+            font-size: 13px;
+        }
+
+        .share-btn-primary:hover {
+            background: #333;
+        }
+
+        /* 底部输入框 */
+        .chat-bottom {
+            padding: 20px 32px 28px;
+            background: var(--color-bg);
+        }
+
+        .chat-input-wrap {
+            display: flex;
+            flex-direction: column;
+            padding: 16px 20px;
+            background: var(--color-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05);
+            transition: all 0.15s;
+        }
+
+        .chat-input-wrap:focus-within {
+            box-shadow: 0 8px 48px rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.1);
+        }
+
+        .chat-input-wrap textarea {
+            width: 100%;
+            min-height: 48px;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            color: var(--color-text);
+            outline: none;
+            resize: none;
+            line-height: 1.5;
+            font-family: inherit;
+        }
+
+        .chat-input-wrap textarea::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .chat-input-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toolbar-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--color-text-muted);
+        }
+
+        .toolbar-btn:hover {
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+        }
+
+        .toolbar-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* 功能胶囊标签 */
+        .analysis-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            background: var(--color-bg);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .action-btn:hover {
+            border-color: var(--color-text);
+            color: var(--color-text);
+        }
+
+        .action-btn.active {
+            background: var(--color-text);
+            border-color: var(--color-text);
+            color: white;
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--color-bg-secondary);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--color-text-muted);
+        }
+
+        .send-btn:hover {
+            background: var(--color-text);
+            color: white;
+        }
+
+        .send-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 侧边栏导航 -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-mark"><span>G</span></div>
+            <span class="logo-text">GemgenAI</span>
+        </div>
+
+        <nav class="nav">
+            <div class="nav-section">
+                <div class="nav-label">菜单</div>
+                <a href="#" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/>
+                    </svg>
+                    添加视频
+                </a>
+                <a href="#" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/>
+                        <path d="M12 14c-4 0-7 2-7 4v2h14v-2c0-2-3-4-7-4z"/>
+                    </svg>
+                    AI智能分析
+                </a>
+                <a href="#" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 2v2m0 16v2M2 12h2m16 0h2"/>
+                    </svg>
+                    账号监测
+                </a>
+                <a href="#" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <path d="M9 9h6v6H9z"/>
+                    </svg>
+                    智能体管理
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">设置</div>
+                <a href="#" class="nav-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                    </svg>
+                    个人中心
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-menu">
+                <div class="user-avatar">D</div>
+                <div class="user-info">
+                    <div class="user-name">多萝西</div>
+                    <div class="user-plan">专业版</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main">
+        <!-- 左侧：分析记录列表 -->
+        <div class="records-panel" id="recordsPanel">
+            <div class="resize-handle" id="resizeHandle"></div>
+            <div class="records-header">
+                <div class="records-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                        <rect x="9" y="3" width="6" height="4" rx="1"/>
+                    </svg>
+                    分析记录
+                </div>
+            </div>
+
+            <div class="records-search">
+                <div class="search-input-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" placeholder="搜索分析记录...">
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-label">状态筛选</div>
+                <div class="filter-tags">
+                    <span class="filter-tag active">全部</span>
+                    <span class="filter-tag">分析中</span>
+                    <span class="filter-tag">分析完成</span>
+                    <span class="filter-tag">失败</span>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-label">平台筛选</div>
+                <div class="filter-tags">
+                    <span class="filter-tag active">全部</span>
+                    <span class="filter-tag">Facebook</span>
+                    <span class="filter-tag">YouTube</span>
+                    <span class="filter-tag">TikTok</span>
+                </div>
+            </div>
+
+            <div class="records-list">
+                <!-- 记录1 -->
+                <div class="record-item active">
+                    <div class="record-thumb">
+                        <span class="badge">已完成</span>
+                    </div>
+                    <div class="record-info">
+                        <div class="record-title">使用ChatGPT生成各种风格图，完整新手指导手册</div>
+                        <div class="record-meta">
+                            <span>👁 103K</span>
+                            <span>👍 3.2K</span>
+                            <span class="divider">·</span>
+                            <span>10月23日</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 记录2 -->
+                <div class="record-item">
+                    <div class="record-thumb">
+                        <span class="badge">已完成</span>
+                    </div>
+                    <div class="record-info">
+                        <div class="record-title">Google AI Studio生成工具合自己做创意商品DM+ Gemini食谱</div>
+                        <div class="record-meta">
+                            <span>👁 42K</span>
+                            <span>👍 1.5K</span>
+                            <span class="divider">·</span>
+                            <span>9月23日</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 记录3 -->
+                <div class="record-item">
+                    <div class="record-thumb">
+                        <span class="badge">已完成</span>
+                    </div>
+                    <div class="record-info">
+                        <div class="record-title">主要的投入仅仅让我成真最好的公益讲者心得手段教训和总结</div>
+                        <div class="record-meta">
+                            <span>👁 2.1K</span>
+                            <span>👍 191</span>
+                            <span class="divider">·</span>
+                            <span>5月17日</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 记录4 -->
+                <div class="record-item">
+                    <div class="record-thumb">
+                        <span class="badge">已完成</span>
+                    </div>
+                    <div class="record-info">
+                        <div class="record-title">在宝贝灯泡把开关灯「轨道灯」「造型灯」一定要新房新设计</div>
+                        <div class="record-meta">
+                            <span>👁 1.7K</span>
+                            <span>👍 117.8K</span>
+                            <span class="divider">·</span>
+                            <span>5月10日</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 记录5 -->
+                <div class="record-item">
+                    <div class="record-thumb">
+                        <span class="badge">已完成</span>
+                    </div>
+                    <div class="record-info">
+                        <div class="record-title">手机离线AI，不用联网完整！Ollama本地部署，免费开源</div>
+                        <div class="record-meta">
+                            <span>👁 70K</span>
+                            <span>👍 1.7K</span>
+                            <span class="divider">·</span>
+                            <span>11月15日</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 记录6 -->
+                <div class="record-item">
+                    <div class="record-thumb">
+                        <span class="badge">已完成</span>
+                    </div>
+                    <div class="record-info">
+                        <div class="record-title">谷歌负责生图！纯来客家大数据分析!技数峰盒AI工具学起来</div>
+                        <div class="record-meta">
+                            <span>👁 1.5K</span>
+                            <span>👍 55</span>
+                            <span class="divider">·</span>
+                            <span>8月16日</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 记录7 -->
+                <div class="record-item">
+                    <div class="record-thumb">
+                        <span class="badge">已完成</span>
+                    </div>
+                    <div class="record-info">
+                        <div class="record-title">现在继续演唱视频？看GemAI + Google AI Studio一建生成</div>
+                        <div class="record-meta">
+                            <span>👁 2.7K</span>
+                            <span>👍 10</span>
+                            <span class="divider">·</span>
+                            <span>10月15日</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 记录8 -->
+                <div class="record-item">
+                    <div class="record-thumb">
+                        <span class="badge">已完成</span>
+                    </div>
+                    <div class="record-info">
+                        <div class="record-title">ChatGPT-4 Atlas次数器!「大改通指+记忆力」Chrome浏览器</div>
+                        <div class="record-meta">
+                            <span>👁 145K</span>
+                            <span>👍 7.1K</span>
+                            <span class="divider">·</span>
+                            <span>11月18日</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧：分析详情 -->
+        <div class="detail-panel">
+            <!-- 展开按钮（折叠时显示） -->
+            <div class="expand-btn" id="expandBtn" onclick="expandPanel()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </div>
+            <!-- 顶部操作栏 - 只有语言切换 -->
+            <div class="detail-header">
+                <div class="lang-switch">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    简体中文
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 视频信息区 -->
+            <div class="video-hero">
+                <div class="video-cover">
+                    <div class="play-btn">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="video-details">
+                    <h1 class="video-title">Google AI Studio生图工具合自己做创意商品DM+ Gemini食谱搭配合中文说明｜AI应用教学</h1>
+                    <div class="video-meta-row">
+                        <span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            2025-09-25
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                            5
+                        </span>
+                    </div>
+                    <div class="video-stats">
+                        <div class="stat-item">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                            <span class="value">426</span>
+                        </div>
+                        <div class="stat-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            <span class="value">25</span>
+                        </div>
+                        <div class="stat-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <span class="value">11.5K</span>
+                        </div>
+                        <div class="stat-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                            <span class="value">12:34</span>
+                        </div>
+                    </div>
+                    <!-- 操作按钮 - 在数据下方 -->
+                    <div class="video-actions">
+                        <button class="btn-secondary">复制视频链接</button>
+                        <button class="btn-primary">跳转至视频播放</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分析者信息 -->
+            <div class="analyzer-section">
+                <div class="analyzer-avatar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/>
+                        <path d="M12 14c-4 0-7 2-7 4v2h14v-2c0-2-3-4-7-4z"/>
+                    </svg>
+                </div>
+                <div class="analyzer-info">
+                    <div class="analyzer-name">视频智囊</div>
+                    <div class="analyzer-desc">智能分析助手</div>
+                </div>
+            </div>
+
+            <!-- 对话结果展示区 -->
+            <div class="chat-area">
+                <div class="chat-messages">
+                    
+                    <!-- AI消息1 -->
+                    <div class="ai-message">
+                        <div class="chat-text-output">
+                            <p>为了给你提供更有价值的中国汽车出海 2025 年车型排名报告，我需要确认两个关键点：你关注的是全球整体排名，还是特定区域市场（如欧洲、东南亚、北美等）的表现？另外，你更看重哪些评价指标，如销量、市场份额、品牌影响力还是技术创新？</p>
+                        </div>
+                        <div class="ai-message-actions">
+                            <button class="ai-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                            </button>
+                            <button class="ai-action-btn" onclick="openShareDialog()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                </svg>
+                                分享
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 用户消息1 -->
+                    <div class="user-message">
+                        <div class="user-message-bubble">中国汽车出海2025年车型排名前十，请输出一个300字的报告。</div>
+                    </div>
+
+                    <!-- AI消息2 -->
+                    <div class="ai-message">
+                        <div class="chat-text-output">
+                            <p>好的，我将为你生成一份关于中东市场的中国汽车车型排名报告。</p>
+                            <p>即将开始研究，本次研究大概需要 5-10 分钟，完成后我会通知你。</p>
+                        </div>
+                        <div class="ai-message-actions">
+                            <button class="ai-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                            </button>
+                            <button class="ai-action-btn" onclick="openShareDialog()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                </svg>
+                                分享
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 用户消息2 -->
+                    <div class="user-message">
+                        <div class="user-message-bubble">咚咚咚咚中东市场</div>
+                    </div>
+
+                    <!-- AI消息3 - 带卡片 -->
+                    <div class="ai-message">
+                        <div class="result-card-wrap">
+                            <div class="result-card" onclick="openReportDetail()">
+                                <div class="result-card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
+                                    </svg>
+                                </div>
+                                <div class="result-card-content">
+                                    <div class="result-card-body">
+                                        <div class="result-card-title">2025年中国汽车中东市场车型排...</div>
+                                        <div class="result-card-meta">2025-12-23</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="result-card-actions">
+                                <span class="result-card-action" onclick="openShareDialog()">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                    </svg>
+                                    分享
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI消息4 - 纯文字总结 -->
+                    <div class="ai-message">
+                        <div class="chat-text-output">
+                            <p>这个视频主要讲解了如何使用 Google AI Studio 生成创意商品设计图和 Gemini 食谱搭配功能。以下是视频的核心内容总结：</p>
+                            <p><strong>主要亮点：</strong></p>
+                            <ul>
+                                <li>视频开场使用了动态文字特效，配合轻快的背景音乐，吸引观众注意力</li>
+                                <li>讲解节奏清晰，每个功能点都配有实际操作演示</li>
+                                <li>结尾设置了明确的行动号召（CTA），引导观众订阅频道</li>
+                            </ul>
+                            <p>从数据表现来看，该视频的点赞率约为 3.7%，高于平台平均水平，说明内容质量获得了观众认可。</p>
+                        </div>
+                        <div class="ai-message-actions">
+                            <button class="ai-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                            </button>
+                            <button class="ai-action-btn" onclick="openShareDialog()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                </svg>
+                                分享
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="chat-bottom">
+                <div class="chat-input-wrap">
+                    <textarea placeholder="询问任何有关视频的问题..."></textarea>
+                    <div class="chat-input-toolbar">
+                        <div class="toolbar-left">
+                            <div class="analysis-actions">
+                                <button class="action-btn">分析剪辑</button>
+                                <button class="action-btn">综合分析</button>
+                                <button class="action-btn">提取文案</button>
+                                <button class="action-btn">生成脑图</button>
+                                <button class="action-btn">分镜脚本</button>
+                                <button class="action-btn">爆款元素</button>
+                            </div>
+                        </div>
+                        <div class="toolbar-right">
+                            <button class="send-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 19V5M5 12l7-7 7 7"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 报告详情分屏视图 -->
+    <div class="report-detail-overlay" id="reportDetailOverlay">
+        <!-- 左侧对话区 -->
+        <div class="report-detail-left" id="reportDetailLeft">
+            <div class="report-detail-left-header">
+                <div class="report-detail-back" onclick="closeReportDetail()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    返回
+                </div>
+            </div>
+            <div class="report-detail-left-content">
+                <div class="chat-messages">
+                    <div class="result-card-wrap">
+                        <div class="result-card">
+                            <div class="result-card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                </svg>
+                            </div>
+                            <div class="result-card-content">
+                                <div class="result-card-preview">
+                                    <div class="result-card-preview-title">首尾 AI 文档</div>
+                                    <div class="result-card-preview-text">本报告深入分析了2025年中国汽车品牌在中东市场的竞争格局...</div>
+                                </div>
+                                <div class="result-card-body">
+                                    <div class="result-card-title">2025年中国汽车中东市场车型排...</div>
+                                    <div class="result-card-meta">2025-12-23</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="report-detail-left-input">
+                <div class="chat-input-wrap">
+                    <textarea placeholder="继续提问..."></textarea>
+                    <div class="chat-input-toolbar">
+                        <div class="toolbar-left">
+                            <div class="analysis-actions">
+                                <button class="action-btn">追问</button>
+                                <button class="action-btn">修改</button>
+                            </div>
+                        </div>
+                        <div class="toolbar-right">
+                            <button class="send-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 19V5M5 12l7-7 7 7"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 中间拖动条 -->
+        <div class="report-detail-resizer" id="reportDetailResizer"></div>
+
+        <!-- 右侧报告预览区 -->
+        <div class="report-detail-right">
+            <div class="report-detail-right-header">
+                <div></div>
+                <div class="report-actions">
+                    <button class="report-action-btn" title="下载">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                    </button>
+                    <button class="report-action-btn" title="分享">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="18" cy="5" r="3"/>
+                            <circle cx="6" cy="12" r="3"/>
+                            <circle cx="18" cy="19" r="3"/>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                        </svg>
+                    </button>
+                    <button class="report-action-btn" onclick="closeReportDetail()" title="关闭">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="report-detail-right-content">
+                <div class="report-document">
+                    <h1>2025年中国汽车中东市场</h1>
+                    <h2>车型排名前十报告</h2>
+                    <p class="subtitle">新能源化、智能化、本土化引领中国汽车品牌强势崛起</p>
+
+                    <div class="report-stats">
+                        <div class="report-stat-card">
+                            <div class="report-stat-label">2025年市场份额</div>
+                            <div class="report-stat-value">15%</div>
+                            <div class="report-stat-sub positive">+13个百分点</div>
+                        </div>
+                        <div class="report-stat-card">
+                            <div class="report-stat-label">2019年市场份额</div>
+                            <div class="report-stat-value">2%</div>
+                        </div>
+                        <div class="report-stat-card highlight">
+                            <div class="report-stat-label">以色列市场份额</div>
+                            <div class="report-stat-value">49.5%</div>
+                            <div class="report-stat-sub">2025年9月数据</div>
+                        </div>
+                        <div class="report-stat-card">
+                            <div class="report-stat-label">中东市场平均购车年龄</div>
+                            <div class="report-stat-value">31岁</div>
+                            <div class="report-stat-sub">年轻化特征明显</div>
+                        </div>
+                    </div>
+
+                    <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;">2025年中国汽车中东市场车型排名前十</h3>
+                    <div class="report-table-wrap">
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>排名</th>
+                                    <th>车型</th>
+                                    <th>品牌</th>
+                                    <th>主要市场</th>
+                                    <th>2025年1-11月销量</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="rank">1</td>
+                                    <td>小鹏G6</td>
+                                    <td>小鹏</td>
+                                    <td>以色列、阿联酋</td>
+                                    <td>12,000+</td>
+                                </tr>
+                                <tr>
+                                    <td class="rank">2</td>
+                                    <td>比亚迪元PLUS (Atto 3)</td>
+                                    <td>比亚迪</td>
+                                    <td>以色列、沙特、阿联酋</td>
+                                    <td>15,000+</td>
+                                </tr>
+                                <tr>
+                                    <td class="rank">3</td>
+                                    <td>捷途T2</td>
+                                    <td>捷途</td>
+                                    <td>沙特、阿联酋、卡塔尔</td>
+                                    <td>25,000+</td>
+                                </tr>
+                                <tr>
+                                    <td class="rank">4</td>
+                                    <td>奇瑞瑞虎系列</td>
+                                    <td>奇瑞</td>
+                                    <td>沙特、以色列、伊朗</td>
+                                    <td>35,000+</td>
+                                </tr>
+                                <tr>
+                                    <td class="rank">5</td>
+                                    <td>比亚迪海豚</td>
+                                    <td>比亚迪</td>
+                                    <td>以色列、阿联酋</td>
+                                    <td>8,000+</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分享对话弹窗 -->
+    <div class="share-dialog-overlay" id="shareDialogOverlay">
+        <div class="share-dialog size-c" id="shareDialog">
+            <div class="share-dialog-header">
+                <div class="share-dialog-header-left">
+                    <div class="share-dialog-title">分享对话</div>
+                    <div class="share-dialog-subtitle">内容由 AI 生成，不能完全保障真实</div>
+                </div>
+                <button class="share-dialog-close" onclick="closeShareDialog()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="share-dialog-content">
+                <div class="share-message-list">
+                    <!-- AI消息1 -->
+                    <div class="share-message-item">
+                        <div class="share-message-checkbox" onclick="toggleShareCheck(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <div class="share-message-content">
+                            <div class="share-message-text">
+                                <p>为了给你提供更有价值的中国汽车出海 2025 年车型排名报告，我需要确认两个关键点：你关注的是全球整体排名，还是特定区域市场（如欧洲、东南亚、北美等）的表现？另外，你更看重哪些评价指标，如销量、市场份额、品牌影响力还是技术创新？</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 用户消息1 -->
+                    <div class="share-message-item user">
+                        <div class="share-message-checkbox checked" onclick="toggleShareCheck(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <div class="share-message-content">
+                            <div class="share-message-text">中国汽车出海2025年车型排名前十，请输出一个300字的报告。</div>
+                        </div>
+                    </div>
+
+                    <!-- AI消息2 -->
+                    <div class="share-message-item">
+                        <div class="share-message-checkbox checked" onclick="toggleShareCheck(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <div class="share-message-content">
+                            <div class="share-message-text">
+                                <p>好的，我将为你生成一份关于中东市场的中国汽车车型排名报告。</p>
+                                <p>即将开始研究，本次研究大概需要 5-10 分钟，完成后我会通知你。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 用户消息2 -->
+                    <div class="share-message-item user">
+                        <div class="share-message-checkbox checked" onclick="toggleShareCheck(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <div class="share-message-content">
+                            <div class="share-message-text">咚咚咚咚中东市场</div>
+                        </div>
+                    </div>
+
+                    <!-- AI消息3 - 带卡片 -->
+                    <div class="share-message-item">
+                        <div class="share-message-checkbox checked" onclick="toggleShareCheck(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <div class="share-message-content">
+                            <div class="share-card-preview">
+                                <div class="share-card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
+                                    </svg>
+                                </div>
+                                <div class="share-card-body">
+                                    <div class="share-card-title">2025年中国汽车中东市场车型排...</div>
+                                    <div class="share-card-meta">2025-12-23</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="share-dialog-footer">
+                <div class="share-footer-left">
+                    <div class="share-select-all" onclick="toggleShareSelectAll()">
+                        <div class="share-select-all-checkbox" id="shareSelectAllCheckbox">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <span>全选</span>
+                    </div>
+                    <label class="share-permission">
+                        <input type="checkbox" checked>
+                        允许其他用户访问聊天中的文件
+                    </label>
+                </div>
+                <div class="share-footer-right">
+                    <button class="share-btn-more">···</button>
+                    <button class="share-btn-primary">复制链接</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    // ================================
+    // 左侧记录面板拖动
+    // ================================
+    const panel = document.getElementById('recordsPanel');
+    const handle = document.getElementById('resizeHandle');
+    const expandBtn = document.getElementById('expandBtn');
+    
+    let isPanelDragging = false;
+    let panelStartX, panelStartWidth;
+
+    handle.addEventListener('mousedown', (e) => {
+        isPanelDragging = true;
+        panelStartX = e.clientX;
+        panelStartWidth = panel.offsetWidth;
+        handle.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+    });
+
+    // 展开面板
+    function expandPanel() {
+        panel.classList.remove('collapsed');
+        panel.style.width = '320px';
+        expandBtn.style.display = 'none';
+    }
+
+    // ================================
+    // 报告详情分屏视图
+    // ================================
+    const reportOverlay = document.getElementById('reportDetailOverlay');
+    const reportLeft = document.getElementById('reportDetailLeft');
+    const reportResizer = document.getElementById('reportDetailResizer');
+
+    let isReportDragging = false;
+    let reportStartX, reportStartWidth;
+
+    // 打开报告详情
+    function openReportDetail() {
+        reportOverlay.classList.add('active');
+    }
+
+    // 关闭报告详情
+    function closeReportDetail() {
+        reportOverlay.classList.remove('active');
+    }
+
+    // 拖动调整报告详情左侧宽度
+    reportResizer.addEventListener('mousedown', (e) => {
+        isReportDragging = true;
+        reportStartX = e.clientX;
+        reportStartWidth = reportLeft.offsetWidth;
+        reportResizer.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+    });
+
+    // 统一的mousemove处理
+    document.addEventListener('mousemove', (e) => {
+        // 记录面板拖动
+        if (isPanelDragging) {
+            const diff = e.clientX - panelStartX;
+            let newWidth = panelStartWidth + diff;
+            
+            if (newWidth < 200) newWidth = 200;
+            if (newWidth > 500) newWidth = 500;
+            
+            if (newWidth < 100) {
+                panel.classList.add('collapsed');
+                expandBtn.style.display = 'flex';
+            } else {
+                panel.classList.remove('collapsed');
+                panel.style.width = newWidth + 'px';
+                expandBtn.style.display = 'none';
+            }
+        }
+        
+        // 报告详情拖动
+        if (isReportDragging) {
+            const diff = e.clientX - reportStartX;
+            let newWidth = reportStartWidth + diff;
+            
+            if (newWidth < 300) newWidth = 300;
+            if (newWidth > 800) newWidth = 800;
+            
+            reportLeft.style.width = newWidth + 'px';
+        }
+    });
+
+    // 统一的mouseup处理
+    document.addEventListener('mouseup', () => {
+        if (isPanelDragging) {
+            isPanelDragging = false;
+            handle.classList.remove('dragging');
+        }
+        if (isReportDragging) {
+            isReportDragging = false;
+            reportResizer.classList.remove('dragging');
+        }
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+    });
+
+    // ESC键关闭
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (shareDialogOverlay.classList.contains('active')) {
+                closeShareDialog();
+            } else if (reportOverlay.classList.contains('active')) {
+                closeReportDetail();
+            }
+        }
+    });
+
+    // ================================
+    // 分享对话弹窗
+    // ================================
+    const shareDialogOverlay = document.getElementById('shareDialogOverlay');
+
+    // 打开分享弹窗
+    function openShareDialog() {
+        shareDialogOverlay.classList.add('active');
+    }
+
+    // 关闭分享弹窗
+    function closeShareDialog() {
+        shareDialogOverlay.classList.remove('active');
+    }
+
+    // 切换单个复选框
+    function toggleShareCheck(el) {
+        el.classList.toggle('checked');
+        updateShareSelectAllState();
+    }
+
+    // 切换全选
+    function toggleShareSelectAll() {
+        const selectAllCheckbox = document.getElementById('shareSelectAllCheckbox');
+        const allCheckboxes = document.querySelectorAll('.share-message-checkbox');
+        const isChecked = !selectAllCheckbox.classList.contains('checked');
+        
+        selectAllCheckbox.classList.toggle('checked');
+        allCheckboxes.forEach(cb => {
+            if (isChecked) {
+                cb.classList.add('checked');
+            } else {
+                cb.classList.remove('checked');
+            }
+        });
+    }
+
+    // 更新全选状态
+    function updateShareSelectAllState() {
+        const selectAllCheckbox = document.getElementById('shareSelectAllCheckbox');
+        const allCheckboxes = document.querySelectorAll('.share-message-checkbox');
+        const checkedCount = document.querySelectorAll('.share-message-checkbox.checked').length;
+        
+        if (checkedCount === allCheckboxes.length) {
+            selectAllCheckbox.classList.add('checked');
+        } else {
+            selectAllCheckbox.classList.remove('checked');
+        }
+    }
+
+    // 点击遮罩关闭弹窗
+    shareDialogOverlay.addEventListener('click', (e) => {
+        if (e.target === shareDialogOverlay) {
+            closeShareDialog();
+        }
+    });
+</script>

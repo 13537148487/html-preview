@@ -1,0 +1,2685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能体管理 - GemgenAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg: #FFFFFF;
+            --color-bg-secondary: #F9FAFB;
+            --color-bg-tertiary: #F3F4F6;
+            --color-border: #E5E7EB;
+            --color-text: #111827;
+            --color-text-secondary: #4B5563;
+            --color-text-muted: #9CA3AF;
+            --sidebar-width: 220px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--color-bg);
+            border-right: 1px solid var(--color-border);
+            padding: 20px 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            padding: 0 20px 24px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-text);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            padding: 0 20px;
+            font-size: 11px;
+            color: var(--color-text-muted);
+            margin-bottom: 8px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 2px 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+
+        .nav-link:hover {
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+        }
+
+        .nav-link.active {
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .nav-link svg {
+            width: 18px;
+            height: 18px;
+            opacity: 0.6;
+        }
+
+        .nav-link:hover svg,
+        .nav-link.active svg {
+            opacity: 1;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 16px 20px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--color-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .user-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--color-text-muted);
+        }
+
+        /* 主内容区 */
+        main {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* 左侧智能体列表 */
+        .agent-panel {
+            width: 240px;
+            background: var(--color-bg);
+            border-right: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .agent-panel-header {
+            padding: 20px 16px 16px;
+        }
+
+        .agent-panel-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .agent-search {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            font-size: 13px;
+            background: var(--color-bg);
+        }
+
+        .agent-search:focus {
+            outline: none;
+            border-color: var(--color-text-muted);
+        }
+
+        .agent-search::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .agent-count {
+            padding: 8px 16px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        .agent-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .agent-card {
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-bottom: 4px;
+            position: relative;
+        }
+
+        .agent-card:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .agent-card.active {
+            background: #E5E5E5;
+        }
+
+        .agent-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .agent-card-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--color-bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .agent-card-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .agent-card-avatar svg {
+            width: 16px;
+            height: 16px;
+            color: var(--color-text-muted);
+        }
+
+        .agent-card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .agent-card-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .agent-card-desc {
+            font-size: 11px;
+            color: var(--color-text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .agent-card-actions {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .agent-card:hover .agent-card-actions {
+            opacity: 1;
+        }
+
+        .agent-card-btn {
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+        }
+
+        .agent-card-btn:hover {
+            background: var(--color-bg-tertiary);
+            color: var(--color-text);
+        }
+
+        .agent-card-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .agent-card-date {
+            font-size: 10px;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+
+        .agent-panel-footer {
+            padding: 16px;
+            padding-bottom: 28px;
+            margin-top: auto;
+        }
+
+        .create-agent-btn {
+            width: 100%;
+            padding: 10px;
+            background: var(--color-text);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .create-agent-btn:hover {
+            background: #333;
+        }
+
+        .create-agent-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* 右侧内容区 */
+        .content-area {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 0;
+            overflow: hidden;
+        }
+
+        /* 左栏 - 内容参考来源 */
+        .source-section {
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--color-border);
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .source-header {
+            padding: 16px 20px;
+            background: var(--color-bg);
+        }
+
+        .source-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .source-filters {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .source-tabs {
+            display: flex;
+            gap: 6px;
+        }
+
+        .source-tab {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+            background: var(--color-bg-secondary);
+            color: var(--color-text-secondary);
+        }
+
+        .source-tab:hover {
+            background: var(--color-bg-tertiary);
+        }
+
+        .source-tab.active {
+            background: var(--color-text);
+            color: white;
+        }
+
+        .source-search {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            font-size: 12px;
+            box-sizing: border-box;
+            margin-top: 10px;
+        }
+
+        .source-search:focus {
+            outline: none;
+            border-color: var(--color-text-muted);
+        }
+
+        .source-search::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .source-status-tabs {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .status-tab {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: var(--color-bg-secondary);
+            color: var(--color-text-secondary);
+        }
+
+        .status-tab:hover {
+            background: var(--color-bg-tertiary);
+        }
+
+        .status-tab.active {
+            background: var(--color-text);
+            color: white;
+        }
+
+        .source-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            background: var(--color-bg);
+        }
+
+        .source-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            transition: background 0.15s;
+            cursor: pointer;
+        }
+
+        .source-item:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .source-item.selected {
+            background: #E5E5E5;
+        }
+
+        .source-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .source-item-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .source-item-meta {
+            font-size: 11px;
+            color: var(--color-text-muted);
+        }
+
+        .source-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .source-item-status {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .source-item-status.unused {
+            background: var(--color-bg-secondary);
+            color: var(--color-text-muted);
+        }
+
+        .source-item-status.used {
+            background: var(--color-bg-tertiary);
+            color: var(--color-text);
+        }
+
+        /* 右栏 - 结果生成（对话式风格） */
+        .result-section {
+            display: flex;
+            flex-direction: column;
+            background: var(--color-bg);
+            overflow: hidden;
+        }
+
+        .result-header {
+            padding: 16px 24px;
+        }
+
+        .result-header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .result-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .result-action-btn {
+            padding: 5px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            font-size: 12px;
+            background: var(--color-bg);
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .result-action-btn:hover {
+            border-color: var(--color-text-muted);
+            color: var(--color-text);
+        }
+
+        .result-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .result-tab {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: var(--color-bg-secondary);
+            color: var(--color-text-secondary);
+        }
+
+        .result-tab:hover {
+            background: var(--color-bg-tertiary);
+        }
+
+        .result-tab.active {
+            background: var(--color-text);
+            color: white;
+        }
+
+        .language-select {
+            position: relative;
+        }
+
+        .lang-dropdown {
+            padding: 5px 28px 5px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            font-size: 12px;
+            background: var(--color-bg);
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+        }
+
+        .lang-dropdown:hover {
+            border-color: var(--color-text-muted);
+        }
+
+        .lang-dropdown:focus {
+            outline: none;
+            border-color: var(--color-text-muted);
+        }
+
+        /* 对话式内容区 */
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chat-content {
+            width: 90%;
+            max-width: 800px;
+            min-width: 400px;
+        }
+
+        /* AI消息 */
+        .ai-message {
+            margin-bottom: 24px;
+        }
+
+        .ai-message-text {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--color-text);
+            margin-bottom: 12px;
+        }
+
+        .ai-message-text p {
+            margin-bottom: 12px;
+        }
+
+        .ai-message-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .ai-message-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .ai-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0;
+            background: none;
+            border: none;
+            font-size: 12px;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+
+        .ai-action-btn:hover {
+            color: var(--color-text);
+        }
+
+        .ai-action-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .ai-action-btn.adopt-btn {
+            padding: 4px 0;
+            border: none;
+            background: none;
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        .ai-action-btn.adopt-btn:hover {
+            color: var(--color-text);
+        }
+
+        .ai-action-btn.adopt-btn.adopted {
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            padding: 4px 0;
+        }
+
+        /* 结果卡片（对话中的卡片） */
+        .result-card-wrap {
+            margin-bottom: 16px;
+        }
+
+        .result-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.15s;
+            max-width: 320px;
+        }
+
+        .result-card:hover {
+            border-color: var(--color-text-muted);
+        }
+
+        .result-card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--color-bg-secondary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .result-card-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-text-muted);
+        }
+
+        .result-card-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .result-card-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .result-card-meta {
+            font-size: 11px;
+            color: var(--color-text-muted);
+        }
+
+        /* 详细分析内容 */
+        .analysis-content {
+            margin-bottom: 24px;
+        }
+
+        .analysis-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 12px;
+        }
+
+        .analysis-content ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .analysis-content li {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--color-text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .analysis-content p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--color-text-secondary);
+        }
+
+        /* 底部生成区 - 居中悬浮式 */
+        .chat-input-area {
+            padding: 16px 24px 20px;
+            background: var(--color-bg);
+            display: flex;
+            justify-content: center;
+        }
+
+        .chat-input-wrap {
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 90%;
+            max-width: 800px;
+            min-width: 400px;
+        }
+
+        .generate-label {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            white-space: nowrap;
+        }
+
+        .slider-container {
+            flex: 1;
+            position: relative;
+            height: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .slider-track {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--color-border);
+            border-radius: 2px;
+        }
+
+        .slider-fill {
+            position: absolute;
+            left: 0;
+            height: 4px;
+            background: var(--color-text);
+            border-radius: 2px;
+            pointer-events: none;
+        }
+
+        .generate-slider {
+            width: 100%;
+            height: 20px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+
+        .generate-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--color-text);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .generate-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--color-text);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .generate-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text);
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .generate-btn {
+            padding: 8px 20px;
+            background: var(--color-text);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .generate-btn:hover {
+            background: #333;
+        }
+
+        .generate-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* 弹窗样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            width: 480px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            transform: translateY(-20px);
+            transition: transform 0.2s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            color: var(--color-text-muted);
+            transition: all 0.15s;
+        }
+
+        .modal-close:hover {
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+        }
+
+        .modal-close svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: calc(90vh - 140px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: #EF4444;
+            margin-left: 2px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.15s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-text-muted);
+        }
+
+        .form-input::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+            transition: border-color 0.15s;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--color-text-muted);
+        }
+
+        .form-textarea::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .form-textarea.large {
+            min-height: 120px;
+        }
+
+        /* 头像上传 */
+        .avatar-upload {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar-preview {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            background: var(--color-bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+        }
+
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-preview .avatar-icon {
+            font-size: 32px;
+        }
+
+        .avatar-upload-info {
+            flex: 1;
+        }
+
+        .avatar-upload-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            background: white;
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .avatar-upload-btn:hover {
+            border-color: var(--color-text-muted);
+            color: var(--color-text);
+        }
+
+        .avatar-upload-hint {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            margin-top: 6px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 16px 24px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .btn-cancel {
+            padding: 10px 20px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--color-text-muted);
+            color: var(--color-text);
+        }
+
+        .btn-save {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: var(--color-text);
+            font-size: 14px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-save:hover {
+            background: #333;
+        }
+
+        /* ================================
+           分享对话弹窗 - 扁平欧美风格
+           ================================ */
+        .share-dialog-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-dialog-overlay.active {
+            display: flex;
+        }
+
+        .share-dialog {
+            background: #FFFFFF;
+            border-radius: 12px;
+            width: 720px;
+            max-width: 90vw;
+            max-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+        }
+
+        .share-dialog-header {
+            padding: 20px 24px 16px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .share-dialog-header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .share-dialog-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #111;
+            letter-spacing: -0.01em;
+        }
+
+        .share-dialog-subtitle {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .share-dialog-close {
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            transition: color 0.15s;
+            padding: 0;
+        }
+
+        .share-dialog-close:hover {
+            color: #333;
+        }
+
+        .share-dialog-close svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .share-dialog-content {
+            flex: 1;
+            overflow-y: auto;
+            border-top: 1px solid #F0F0F0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .share-message-list {
+            padding: 4px 0;
+        }
+
+        .share-message-item {
+            display: flex;
+            gap: 12px;
+            padding: 14px 24px;
+        }
+
+        .share-message-checkbox {
+            width: 16px;
+            height: 16px;
+            min-width: 16px;
+            border: 1.5px solid #D0D0D0;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s;
+            background: #FFF;
+            margin-top: 2px;
+        }
+
+        .share-message-checkbox:hover {
+            border-color: #999;
+        }
+
+        .share-message-checkbox.checked {
+            background: var(--color-text);
+            border-color: var(--color-text);
+        }
+
+        .share-message-checkbox.checked svg {
+            display: block;
+        }
+
+        .share-message-checkbox svg {
+            width: 10px;
+            height: 10px;
+            color: white;
+            display: none;
+        }
+
+        .share-message-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .share-message-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .share-message-text p {
+            margin-bottom: 6px;
+        }
+
+        .share-message-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 用户消息样式 */
+        .share-message-item.user .share-message-content {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .share-message-item.user .share-message-text {
+            background: #FAFAFA;
+            border: 1px solid #E8E8E8;
+            border-radius: 8px;
+            padding: 10px 14px;
+            max-width: 85%;
+        }
+
+        /* 卡片预览 */
+        .share-card-preview {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #E8E8E8;
+            border-radius: 6px;
+            padding: 10px 14px;
+            background: #FAFAFA;
+        }
+
+        .share-card-icon {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-card-icon svg {
+            width: 18px;
+            height: 18px;
+            color: #666;
+        }
+
+        .share-card-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .share-card-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .share-card-meta {
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        /* 弹窗底部 */
+        .share-dialog-footer {
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .share-footer-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .share-select-all {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .share-select-all-checkbox {
+            width: 14px;
+            height: 14px;
+            border: 1.5px solid #D0D0D0;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s;
+            background: #FFF;
+        }
+
+        .share-select-all-checkbox.checked {
+            background: var(--color-text);
+            border-color: var(--color-text);
+        }
+
+        .share-select-all-checkbox.checked svg {
+            display: block;
+        }
+
+        .share-select-all-checkbox svg {
+            width: 9px;
+            height: 9px;
+            color: white;
+            display: none;
+        }
+
+        .share-permission {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .share-permission input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            accent-color: var(--color-text);
+            margin: 0;
+        }
+
+        .share-footer-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .share-btn-more {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #E0E0E0;
+            border-radius: 6px;
+            background: #FFF;
+            font-size: 13px;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-btn-more:hover {
+            border-color: #CCC;
+            color: #555;
+        }
+
+        .share-btn-primary {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background: var(--color-text);
+            font-size: 12px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .share-btn-primary:hover {
+            background: #333;
+        }
+
+        /* ================================
+           报告详情分屏视图
+           ================================ */
+        .report-detail-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 220px;
+            right: 0;
+            bottom: 0;
+            background: var(--color-bg);
+            z-index: 200;
+        }
+
+        .report-detail-overlay.active {
+            display: flex;
+        }
+
+        /* 左侧对话区 */
+        .report-detail-left {
+            width: 50%;
+            min-width: 300px;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: var(--color-bg);
+        }
+
+        .report-detail-left-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .report-detail-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+
+        .report-detail-back:hover {
+            color: var(--color-text);
+        }
+
+        .report-detail-back svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .report-detail-left-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .report-detail-left-input {
+            padding: 16px 24px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .report-input-wrap {
+            display: flex;
+            flex-direction: column;
+            padding: 16px 20px;
+            background: var(--color-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05);
+        }
+
+        .report-input-wrap textarea {
+            width: 100%;
+            min-height: 48px;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            color: var(--color-text);
+            outline: none;
+            resize: none;
+            line-height: 1.5;
+            font-family: inherit;
+        }
+
+        .report-input-wrap textarea::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .report-input-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+
+        .report-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .report-action-tag {
+            padding: 6px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            background: var(--color-bg);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .report-action-tag:hover {
+            border-color: var(--color-text);
+            color: var(--color-text);
+        }
+
+        .report-send-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--color-bg-secondary);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--color-text-muted);
+        }
+
+        .report-send-btn:hover {
+            background: var(--color-text);
+            color: white;
+        }
+
+        .report-send-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* 中间拖动条 */
+        .report-detail-resizer {
+            width: 6px;
+            background: var(--color-border);
+            cursor: col-resize;
+            transition: background 0.15s;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .report-detail-resizer::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 40px;
+            background: var(--color-text-muted);
+            border-radius: 2px;
+            opacity: 0.5;
+        }
+
+        .report-detail-resizer:hover {
+            background: var(--color-text-muted);
+        }
+
+        .report-detail-resizer:hover::after {
+            opacity: 1;
+        }
+
+        .report-detail-resizer.dragging {
+            background: var(--color-text);
+        }
+
+        /* 右侧报告预览区 */
+        .report-detail-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #F8F9FA;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .report-detail-right-header {
+            padding: 12px 24px;
+            background: var(--color-bg);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .report-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .report-header-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--color-text-muted);
+        }
+
+        .report-header-btn:hover {
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+        }
+
+        .report-header-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .report-detail-right-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 报告内容 */
+        .report-document {
+            background: var(--color-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            padding: 48px 56px;
+            box-sizing: border-box;
+        }
+
+        .report-document h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .report-document h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 16px;
+        }
+
+        .report-document .subtitle {
+            font-size: 15px;
+            color: var(--color-text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .report-document h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 16px;
+        }
+
+        .report-document p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--color-text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .report-document ul {
+            margin-bottom: 16px;
+            padding-left: 20px;
+        }
+
+        .report-document li {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--color-text-secondary);
+            margin-bottom: 8px;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+        <div class="logo">GemgenAI</div>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">菜单</div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="16"/>
+                            <line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                        添加视频
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        AI智能分析
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="1"/>
+                            <circle cx="12" cy="5" r="1"/>
+                            <circle cx="12" cy="19" r="1"/>
+                        </svg>
+                        账号监测
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="9" y1="3" x2="9" y2="21"/>
+                        </svg>
+                        智能体管理
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">设置</div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        个人中心
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">D</div>
+                <div>
+                    <div class="user-name">多萝西</div>
+                    <div class="user-role">专业版</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main>
+        <!-- 左侧智能体列表 -->
+        <div class="agent-panel">
+            <div class="agent-panel-header">
+                <div class="agent-panel-title">智能体列表</div>
+                <input type="text" class="agent-search" placeholder="搜索智能体">
+            </div>
+            <div class="agent-count">共4个智能体</div>
+            <div class="agent-list">
+                <!-- 智能体卡片1 -->
+                <div class="agent-card active">
+                    <div class="agent-card-header">
+                        <div class="agent-card-avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="agent-card-info">
+                            <div class="agent-card-name">AISEO</div>
+                            <div class="agent-card-desc">SEO内容优化专家</div>
+                        </div>
+                    </div>
+                    <div class="agent-card-date">2025-12-22 12:51:24</div>
+                    <div class="agent-card-actions">
+                        <button class="agent-card-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </button>
+                        <button class="agent-card-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 智能体卡片2 -->
+                <div class="agent-card">
+                    <div class="agent-card-header">
+                        <div class="agent-card-avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="agent-card-info">
+                            <div class="agent-card-name">AI分享家</div>
+                            <div class="agent-card-desc">社交媒体内容创作</div>
+                        </div>
+                    </div>
+                    <div class="agent-card-date">2025-12-17 12:27:09</div>
+                    <div class="agent-card-actions">
+                        <button class="agent-card-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </button>
+                        <button class="agent-card-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 智能体卡片3 -->
+                <div class="agent-card">
+                    <div class="agent-card-header">
+                        <div class="agent-card-avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="agent-card-info">
+                            <div class="agent-card-name">智能体2</div>
+                            <div class="agent-card-desc">数据分析助手</div>
+                        </div>
+                    </div>
+                    <div class="agent-card-date">2025-12-17 13:07:15</div>
+                    <div class="agent-card-actions">
+                        <button class="agent-card-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </button>
+                        <button class="agent-card-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 智能体卡片4 -->
+                <div class="agent-card">
+                    <div class="agent-card-header">
+                        <div class="agent-card-avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="agent-card-info">
+                            <div class="agent-card-name">智能体1</div>
+                            <div class="agent-card-desc">通用助手</div>
+                        </div>
+                    </div>
+                    <div class="agent-card-date">2025-12-17 11:49:43</div>
+                    <div class="agent-card-actions">
+                        <button class="agent-card-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </button>
+                        <button class="agent-card-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="agent-panel-footer">
+                <button class="create-agent-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    新建智能体
+                </button>
+            </div>
+        </div>
+
+        <!-- 右侧内容区 -->
+        <div class="content-area">
+            <!-- 左栏 - 内容参考来源 -->
+            <div class="source-section">
+                <div class="source-header">
+                    <div class="source-title">内容参考来源选择</div>
+                    <div class="source-filters">
+                        <div class="source-tabs">
+                            <div class="source-tab active">全部</div>
+                            <div class="source-tab">Facebook</div>
+                            <div class="source-tab">YouTube</div>
+                            <div class="source-tab">TikTok</div>
+                        </div>
+                    </div>
+                    <input type="text" class="source-search" placeholder="搜索视频标题">
+                    <div class="source-status-tabs">
+                        <div class="status-tab active">全部</div>
+                        <div class="status-tab">已使用</div>
+                        <div class="status-tab">未使用</div>
+                    </div>
+                </div>
+                <div class="source-list">
+                    <div class="source-item selected">
+                        <div class="source-content">
+                            <div class="source-item-title">美地SEO最重大修了他主层的网站啊?!</div>
+                            <div class="source-item-row">
+                                <div class="source-item-meta">YouTube · 12分钟</div>
+                                <div class="source-item-status unused">未使用</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="source-item">
+                        <div class="source-content">
+                            <div class="source-item-title">studioOBAKE / sutaシオばけ - 今しか帰えないともだち</div>
+                            <div class="source-item-row">
+                                <div class="source-item-meta">TikTok · 1:34</div>
+                                <div class="source-item-status unused">未使用</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="source-item">
+                        <div class="source-content">
+                            <div class="source-item-title">Massimo - 互联网时代的奇迹似乎如期一样进动</div>
+                            <div class="source-item-row">
+                                <div class="source-item-meta">YouTube · 2:34</div>
+                                <div class="source-item-status unused">未使用</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="source-item selected">
+                        <div class="source-content">
+                            <div class="source-item-title">615K 次观看 · 5.3K 养点亮 | 特级身体开味大，口千口苦的发友关保它详谈由</div>
+                            <div class="source-item-row">
+                                <div class="source-item-meta">抖音 · 6分钟</div>
+                                <div class="source-item-status used">已使用</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="source-item">
+                        <div class="source-content">
+                            <div class="source-item-title">美国国家航空航天局（NASA）—— 探索外星生命的线头这首开始</div>
+                            <div class="source-item-row">
+                                <div class="source-item-meta">推特 · 7:34</div>
+                                <div class="source-item-status unused">未使用</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="source-item">
+                        <div class="source-content">
+                            <div class="source-item-title">How to Build a Successful SaaS Product in 2024</div>
+                            <div class="source-item-row">
+                                <div class="source-item-meta">YouTube · 15:20</div>
+                                <div class="source-item-status used">已使用</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右栏 - 结果生成（对话式） -->
+            <div class="result-section">
+                <!-- 顶部标题和Tab -->
+                <div class="result-header">
+                    <div class="result-header-top">
+                        <div class="result-title">结果生成</div>
+                        <div class="result-actions">
+                            <button class="result-action-btn">清空</button>
+                            <div class="language-select">
+                                <select class="lang-dropdown">
+                                    <option value="zh">简体中文</option>
+                                    <option value="en">English</option>
+                                    <option value="ja">日本語</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-tabs">
+                        <div class="result-tab active">全部</div>
+                        <div class="result-tab">采用</div>
+                        <div class="result-tab">未采用</div>
+                    </div>
+                </div>
+
+                <!-- 对话内容区 -->
+                <div class="chat-area">
+                    <div class="chat-content">
+                    <!-- AI消息1 -->
+                    <div class="ai-message">
+                        <div class="ai-message-text">
+                            <p>即将开始研究，本次研究大概需要 5-10 分钟，完成后我会通知你。</p>
+                        </div>
+                        <div class="ai-message-actions">
+                            <button class="ai-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                            </button>
+                            <button class="ai-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                </svg>
+                                分享
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 结果卡片 -->
+                    <div class="result-card-wrap">
+                        <div class="result-card">
+                            <div class="result-card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                </svg>
+                            </div>
+                            <div class="result-card-body">
+                                <div class="result-card-title">SEO优化实战指南：如何让你的网站...</div>
+                                <div class="result-card-meta">2025-12-24</div>
+                            </div>
+                        </div>
+                        <div class="ai-message-actions" style="margin-top: 8px;">
+                            <button class="ai-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                </svg>
+                                分享
+                            </button>
+                            <button class="ai-action-btn adopt-btn adopted">✓ 已采用</button>
+                        </div>
+                    </div>
+
+                    <!-- 详细分析内容 -->
+                    <div class="analysis-content">
+                        <p>这个视频主要讲解了如何使用 Google AI Studio 生成创意商品设计图和 Gemini 食谱搭配功能。以下是视频的核心内容总结：</p>
+                        
+                        <h4>主要亮点：</h4>
+                        <ul>
+                            <li>视频开场使用了动态文字特效，配合轻快的背景音乐，吸引观众注意力</li>
+                            <li>讲解节奏清晰，每个功能点都配有实际操作演示</li>
+                            <li>结尾设置了明确的行动号召（CTA），引导观众订阅频道</li>
+                        </ul>
+                        
+                        <p>从数据表现来看，该视频的点赞率约为 3.7%，高于平台平均水平，说明内容质量获得了观众认可。</p>
+                    </div>
+
+                    <div class="ai-message-actions">
+                        <button class="ai-action-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                        </button>
+                        <button class="ai-action-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                            </svg>
+                            分享
+                        </button>
+                        <button class="ai-action-btn adopt-btn">采用</button>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- 底部生成区 -->
+                <div class="chat-input-area">
+                    <div class="chat-input-wrap">
+                        <span class="generate-label">生成篇数:</span>
+                        <div class="slider-container">
+                            <div class="slider-track"></div>
+                            <div class="slider-fill" id="sliderFill"></div>
+                            <input type="range" class="generate-slider" min="1" max="20" value="10" id="generateSlider">
+                        </div>
+                        <span class="generate-value" id="generateValue">10篇</span>
+                        <button class="generate-btn">
+                            开始生成
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 19V5M5 12l7-7 7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 新建智能体弹窗 -->
+    <div class="modal-overlay" id="createAgentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">新建智能体</div>
+                <button class="modal-close" onclick="closeModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">智能体头像</label>
+                    <div class="avatar-upload">
+                        <div class="avatar-preview">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 28px; height: 28px; color: #9CA3AF;">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="avatar-upload-info">
+                            <button class="avatar-upload-btn">上传图片</button>
+                            <div class="avatar-upload-hint">支持 JPG、PNG 格式，建议 200x200</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">智能体名称 <span class="required">*</span></label>
+                    <input type="text" class="form-input" placeholder="输入智能体名称">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">功能备注</label>
+                    <textarea class="form-textarea" placeholder="输入功能备注..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">自定义提示词</label>
+                    <textarea class="form-textarea large" placeholder="请输入此智能体的提示词..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn-save">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分享对话弹窗 -->
+    <div class="share-dialog-overlay" id="shareDialogOverlay">
+        <div class="share-dialog">
+            <div class="share-dialog-header">
+                <div class="share-dialog-header-left">
+                    <div class="share-dialog-title">分享对话</div>
+                    <div class="share-dialog-subtitle">选择要分享的内容</div>
+                </div>
+                <button class="share-dialog-close" onclick="closeShareDialog()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="share-dialog-content">
+                <div class="share-message-list">
+                    <!-- AI消息1 -->
+                    <div class="share-message-item">
+                        <div class="share-message-checkbox checked" onclick="toggleShareCheck(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <div class="share-message-content">
+                            <div class="share-message-text">
+                                <p>即将开始研究，本次研究大概需要 5-10 分钟，完成后我会通知你。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI消息2 - 带卡片 -->
+                    <div class="share-message-item">
+                        <div class="share-message-checkbox checked" onclick="toggleShareCheck(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <div class="share-message-content">
+                            <div class="share-card-preview">
+                                <div class="share-card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
+                                    </svg>
+                                </div>
+                                <div class="share-card-body">
+                                    <div class="share-card-title">SEO优化实战指南：如何让你的网站...</div>
+                                    <div class="share-card-meta">2025-12-24</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI消息3 -->
+                    <div class="share-message-item">
+                        <div class="share-message-checkbox checked" onclick="toggleShareCheck(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <div class="share-message-content">
+                            <div class="share-message-text">
+                                <p>这个视频主要讲解了如何使用 Google AI Studio 生成创意商品设计图和 Gemini 食谱搭配功能。以下是视频的核心内容总结：</p>
+                                <p><strong>主要亮点：</strong></p>
+                                <p>• 视频开场使用了动态文字特效，配合轻快的背景音乐，吸引观众注意力</p>
+                                <p>• 讲解节奏清晰，每个功能点都配有实际操作演示</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 用户消息 -->
+                    <div class="share-message-item user">
+                        <div class="share-message-checkbox" onclick="toggleShareCheck(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <div class="share-message-content">
+                            <div class="share-message-text">请帮我生成更多内容</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="share-dialog-footer">
+                <div class="share-footer-left">
+                    <div class="share-select-all" onclick="toggleShareSelectAll()">
+                        <div class="share-select-all-checkbox checked" id="shareSelectAllCheckbox">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <span>全选</span>
+                    </div>
+                    <label class="share-permission">
+                        <input type="checkbox" checked>
+                        允许其他用户访问聊天中的文件
+                    </label>
+                </div>
+                <div class="share-footer-right">
+                    <button class="share-btn-more">···</button>
+                    <button class="share-btn-primary">复制链接</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 报告详情分屏视图 -->
+    <div class="report-detail-overlay" id="reportDetailOverlay">
+        <!-- 左侧对话区 -->
+        <div class="report-detail-left" id="reportDetailLeft">
+            <div class="report-detail-left-header">
+                <div class="report-detail-back" onclick="closeReportDetail()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    返回
+                </div>
+            </div>
+            <div class="report-detail-left-content">
+                <div class="result-card-wrap">
+                    <div class="result-card">
+                        <div class="result-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
+                        <div class="result-card-body">
+                            <div class="result-card-title">SEO优化实战指南：如何让你的网站...</div>
+                            <div class="result-card-meta">2025-12-24</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analysis-content" style="margin-top: 20px;">
+                    <p>这个视频主要讲解了如何使用 Google AI Studio 生成创意商品设计图和 Gemini 食谱搭配功能。以下是视频的核心内容总结：</p>
+                    
+                    <h4>主要亮点：</h4>
+                    <ul>
+                        <li>视频开场使用了动态文字特效，配合轻快的背景音乐，吸引观众注意力</li>
+                        <li>讲解节奏清晰，每个功能点都配有实际操作演示</li>
+                        <li>结尾设置了明确的行动号召（CTA），引导观众订阅频道</li>
+                    </ul>
+                    
+                    <p>从数据表现来看，该视频的点赞率约为 3.7%，高于平台平均水平，说明内容质量获得了观众认可。</p>
+                </div>
+            </div>
+            <div class="report-detail-left-input">
+                <div class="report-input-wrap">
+                    <textarea placeholder="继续提问..."></textarea>
+                    <div class="report-input-toolbar">
+                        <div class="report-toolbar-left">
+                            <button class="report-action-tag">追问</button>
+                            <button class="report-action-tag">修改</button>
+                        </div>
+                        <button class="report-send-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 19V5M5 12l7-7 7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 中间拖动条 -->
+        <div class="report-detail-resizer" id="reportDetailResizer"></div>
+
+        <!-- 右侧报告预览区 -->
+        <div class="report-detail-right">
+            <div class="report-detail-right-header">
+                <div></div>
+                <div class="report-header-actions">
+                    <button class="report-header-btn" title="下载">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                    </button>
+                    <button class="report-header-btn" title="分享">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="18" cy="5" r="3"/>
+                            <circle cx="6" cy="12" r="3"/>
+                            <circle cx="18" cy="19" r="3"/>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                        </svg>
+                    </button>
+                    <button class="report-header-btn" onclick="closeReportDetail()" title="关闭">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="report-detail-right-content">
+                <div class="report-document">
+                    <h1>SEO优化实战指南</h1>
+                    <h2>如何让你的网站排名更靠前</h2>
+                    <p class="subtitle">基于视频内容的深度分析与总结</p>
+
+                    <h3>一、关键词研究</h3>
+                    <p>关键词研究是SEO的基础。需要找到与业务相关且搜索量适中的关键词，避免竞争过于激烈的热门词汇。</p>
+                    <ul>
+                        <li>使用Google Keyword Planner等工具进行关键词挖掘</li>
+                        <li>分析竞争对手的关键词策略</li>
+                        <li>关注长尾关键词，提高转化率</li>
+                    </ul>
+
+                    <h3>二、内容优化</h3>
+                    <p>高质量的内容是吸引用户和搜索引擎的关键。内容需要原创、有价值、结构清晰。</p>
+                    <ul>
+                        <li>标题包含核心关键词</li>
+                        <li>正文自然融入相关关键词</li>
+                        <li>使用H1-H6标签构建内容层次</li>
+                        <li>添加内部链接和外部链接</li>
+                    </ul>
+
+                    <h3>三、技术优化</h3>
+                    <p>网站的技术层面同样重要，影响搜索引擎的抓取和索引效率。</p>
+                    <ul>
+                        <li>优化网站加载速度</li>
+                        <li>确保移动端友好</li>
+                        <li>使用HTTPS协议</li>
+                        <li>提交Sitemap到搜索引擎</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 智能体卡片选择
+        document.querySelectorAll('.agent-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.agent-card').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Tab切换
+        document.querySelectorAll('.source-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('.source-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // 结果Tab切换
+        document.querySelectorAll('.result-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('.result-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // 状态Tab切换
+        document.querySelectorAll('.status-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // 来源项点击切换选中
+        document.querySelectorAll('.source-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+
+        // 滑块值更新
+        const slider = document.getElementById('generateSlider');
+        const valueDisplay = document.getElementById('generateValue');
+        const sliderFill = document.getElementById('sliderFill');
+
+        function updateSlider() {
+            const value = slider.value;
+            const min = slider.min;
+            const max = slider.max;
+            const percentage = ((value - min) / (max - min)) * 100;
+            sliderFill.style.width = percentage + '%';
+            valueDisplay.textContent = value + '篇';
+        }
+
+        slider.addEventListener('input', updateSlider);
+        updateSlider(); // 初始化
+
+        // 弹窗控制
+        function openModal() {
+            document.getElementById('createAgentModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('createAgentModal').classList.remove('active');
+        }
+
+        // 点击遮罩层关闭弹窗
+        document.getElementById('createAgentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // 绑定新建智能体按钮
+        document.querySelector('.create-agent-btn').addEventListener('click', openModal);
+
+        // ================================
+        // 分享对话弹窗
+        // ================================
+        const shareDialogOverlay = document.getElementById('shareDialogOverlay');
+
+        // 打开分享弹窗
+        function openShareDialog() {
+            shareDialogOverlay.classList.add('active');
+        }
+
+        // 关闭分享弹窗
+        function closeShareDialog() {
+            shareDialogOverlay.classList.remove('active');
+        }
+
+        // 切换单个复选框
+        function toggleShareCheck(el) {
+            el.classList.toggle('checked');
+            updateShareSelectAllState();
+        }
+
+        // 切换全选
+        function toggleShareSelectAll() {
+            const selectAllCheckbox = document.getElementById('shareSelectAllCheckbox');
+            const allCheckboxes = document.querySelectorAll('.share-message-checkbox');
+            const isChecked = !selectAllCheckbox.classList.contains('checked');
+            
+            selectAllCheckbox.classList.toggle('checked');
+            allCheckboxes.forEach(cb => {
+                if (isChecked) {
+                    cb.classList.add('checked');
+                } else {
+                    cb.classList.remove('checked');
+                }
+            });
+        }
+
+        // 更新全选状态
+        function updateShareSelectAllState() {
+            const selectAllCheckbox = document.getElementById('shareSelectAllCheckbox');
+            const allCheckboxes = document.querySelectorAll('.share-message-checkbox');
+            const checkedCount = document.querySelectorAll('.share-message-checkbox.checked').length;
+            
+            if (checkedCount === allCheckboxes.length) {
+                selectAllCheckbox.classList.add('checked');
+            } else {
+                selectAllCheckbox.classList.remove('checked');
+            }
+        }
+
+        // 点击遮罩关闭弹窗
+        shareDialogOverlay.addEventListener('click', (e) => {
+            if (e.target === shareDialogOverlay) {
+                closeShareDialog();
+            }
+        });
+
+        // 绑定分享按钮
+        document.querySelectorAll('.ai-action-btn').forEach(btn => {
+            if (btn.textContent.includes('分享')) {
+                btn.addEventListener('click', openShareDialog);
+            }
+        });
+
+        // ================================
+        // 报告详情分屏视图
+        // ================================
+        const reportOverlay = document.getElementById('reportDetailOverlay');
+        const reportLeft = document.getElementById('reportDetailLeft');
+        const reportResizer = document.getElementById('reportDetailResizer');
+
+        let isReportDragging = false;
+        let reportStartX, reportStartWidth;
+
+        // 打开报告详情
+        function openReportDetail() {
+            reportOverlay.classList.add('active');
+        }
+
+        // 关闭报告详情
+        function closeReportDetail() {
+            reportOverlay.classList.remove('active');
+        }
+
+        // 拖动调整报告详情左侧宽度
+        reportResizer.addEventListener('mousedown', (e) => {
+            isReportDragging = true;
+            reportStartX = e.clientX;
+            reportStartWidth = reportLeft.offsetWidth;
+            reportResizer.classList.add('dragging');
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isReportDragging) {
+                const diff = e.clientX - reportStartX;
+                let newWidth = reportStartWidth + diff;
+                
+                if (newWidth < 300) newWidth = 300;
+                if (newWidth > 800) newWidth = 800;
+                
+                reportLeft.style.width = newWidth + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isReportDragging) {
+                isReportDragging = false;
+                reportResizer.classList.remove('dragging');
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+            }
+        });
+
+        // ESC键关闭
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (shareDialogOverlay.classList.contains('active')) {
+                    closeShareDialog();
+                } else if (reportOverlay.classList.contains('active')) {
+                    closeReportDetail();
+                }
+            }
+        });
+
+        // 绑定结果卡片点击打开报告详情
+        document.querySelectorAll('.result-card').forEach(card => {
+            card.addEventListener('click', openReportDetail);
+            card.style.cursor = 'pointer';
+        });
+    </script>
+</body>
+</html>

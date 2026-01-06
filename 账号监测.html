@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账号监测 - GemgenAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg: #FFFFFF;
+            --color-bg-secondary: #F9FAFB;
+            --color-bg-tertiary: #F3F4F6;
+            --color-border: #E5E7EB;
+            --color-text: #111827;
+            --color-text-secondary: #4B5563;
+            --color-text-muted: #9CA3AF;
+            --color-primary: #6366F1;
+            --color-primary-light: #EEF2FF;
+            --sidebar-width: 220px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--color-bg);
+            border-right: 1px solid var(--color-border);
+            padding: 20px 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            padding: 0 20px 24px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-text);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            padding: 0 20px;
+            font-size: 11px;
+            color: var(--color-text-muted);
+            margin-bottom: 8px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 2px 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+
+        .nav-link:hover {
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+        }
+
+        .nav-link.active {
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .nav-link svg {
+            width: 18px;
+            height: 18px;
+            opacity: 0.6;
+        }
+
+        .nav-link:hover svg,
+        .nav-link.active svg {
+            opacity: 1;
+        }
+
+        /* 底部用户信息 */
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 16px 20px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--color-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .user-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--color-text-muted);
+        }
+
+        /* 主内容区 */
+        main {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        /* 顶部配置区 - 简洁扁平风格 */
+        .config-section {
+            background: var(--color-bg);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--color-border);
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr auto;
+            gap: 20px;
+            align-items: end;
+        }
+
+        .config-card {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .config-card-submit {
+            justify-content: flex-end;
+        }
+
+        .config-card-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .config-card-title svg {
+            width: 16px;
+            height: 16px;
+            color: var(--color-text-muted);
+        }
+
+        .config-label {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            margin-bottom: 4px;
+        }
+
+        .config-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--color-text);
+            background: var(--color-bg);
+            transition: border-color 0.15s;
+        }
+
+        .config-input:focus {
+            outline: none;
+            border-color: var(--color-text-muted);
+        }
+
+        .config-input::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .config-select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--color-text);
+            background: var(--color-bg);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        .config-select:focus {
+            outline: none;
+            border-color: var(--color-text-muted);
+        }
+
+        .config-hint {
+            font-size: 11px;
+            color: var(--color-text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .config-hint svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .config-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--color-text);
+            background: var(--color-bg);
+            resize: none;
+            height: 80px;
+        }
+
+        .config-textarea:focus {
+            outline: none;
+            border-color: var(--color-text-muted);
+        }
+
+        .config-textarea::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .submit-btn {
+            padding: 10px 20px;
+            background: var(--color-text);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            align-self: flex-start;
+        }
+
+        .submit-btn:hover {
+            background: #333;
+        }
+
+        .submit-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* 监测账号列表 */
+        .list-section {
+            background: var(--color-bg);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--color-border);
+        }
+
+        .list-header {
+            margin-bottom: 16px;
+        }
+
+        .list-title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .list-filter {
+            margin-bottom: 16px;
+        }
+
+        .list-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .list-tab {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+            background: var(--color-bg-secondary);
+            color: var(--color-text-secondary);
+        }
+
+        .list-tab:hover {
+            background: var(--color-bg-tertiary);
+        }
+
+        .list-tab.active {
+            background: var(--color-text);
+            color: white;
+        }
+
+        /* 账号卡片网格 */
+        .account-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .account-card {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .account-card:hover {
+            border-color: #D1D5DB;
+        }
+
+        .account-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .account-main {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .account-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--color-bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .account-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .account-avatar svg {
+            width: 18px;
+            height: 18px;
+            color: var(--color-text-muted);
+        }
+
+        .account-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .account-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .account-link {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .account-link:hover {
+            color: var(--color-text-secondary);
+        }
+
+        .account-actions {
+            display: flex;
+            gap: 6px;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .account-card:hover .account-actions {
+            opacity: 1;
+        }
+
+        .account-action-btn {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: none;
+            background: transparent;
+            color: var(--color-text-muted);
+        }
+
+        .account-action-btn:hover {
+            background: var(--color-bg-tertiary);
+            color: var(--color-text);
+        }
+
+        .account-action-btn.delete:hover {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        /* 账号统计 - 简洁风格 */
+        .account-stats {
+            display: flex;
+            gap: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .account-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .account-stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-text);
+            line-height: 1;
+        }
+
+        .account-stat-label {
+            font-size: 11px;
+            color: var(--color-text-muted);
+        }
+
+        /* 分页 */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        .pagination-info {
+            margin-right: 12px;
+        }
+
+        .pagination-select {
+            padding: 5px 8px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 12px;
+            background: var(--color-bg);
+        }
+
+        .pagination-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            background: var(--color-bg);
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination-btn:hover {
+            border-color: var(--color-text-muted);
+        }
+
+        .pagination-btn.active {
+            background: var(--color-text);
+            border-color: var(--color-text);
+            color: white;
+        }
+
+        .pagination-input {
+            width: 40px;
+            padding: 5px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        /* 底部用户信息 */
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            padding: 0 16px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--color-bg-secondary);
+            border-radius: 8px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-avatar svg {
+            width: 16px;
+            height: 16px;
+            color: white;
+        }
+
+        .user-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--color-text-muted);
+        }
+
+        /* ================================
+           账号详情页面（隐藏，点击查看时显示）
+           ================================ */
+        .detail-page {
+            display: none;
+        }
+
+        .detail-page.active {
+            display: block;
+        }
+
+        .list-page.hidden {
+            display: none;
+        }
+
+        /* 详情页头部 */
+        .detail-header {
+            background: var(--color-bg);
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            padding: 20px 24px;
+            margin-bottom: 20px;
+        }
+
+        .detail-header-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .detail-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .detail-back {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--color-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+
+        .detail-back:hover {
+            border-color: var(--color-text-muted);
+            background: var(--color-bg-secondary);
+        }
+
+        .detail-back svg {
+            width: 16px;
+            height: 16px;
+            color: var(--color-text-secondary);
+        }
+
+        .detail-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--color-bg-tertiary);
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .detail-avatar svg {
+            width: 28px;
+            height: 28px;
+            color: var(--color-text-muted);
+        }
+
+        .detail-info h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .detail-link {
+            font-size: 13px;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .detail-link:hover {
+            color: var(--color-text-secondary);
+        }
+
+        .detail-link svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .detail-header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+        }
+
+        .detail-stats {
+            display: flex;
+            gap: 32px;
+        }
+
+        .detail-stat {
+            text-align: right;
+        }
+
+        .detail-stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .detail-stat-label {
+            font-size: 11px;
+            color: var(--color-text-muted);
+        }
+
+        .detail-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        .detail-meta {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        .detail-platform strong,
+        .detail-agent strong {
+            color: var(--color-text-secondary);
+            font-weight: 500;
+        }
+
+        /* 详情内容区 */
+        .detail-content {
+            background: var(--color-bg);
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            padding: 20px 24px;
+        }
+
+        .detail-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .detail-title {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .detail-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .export-btn {
+            padding: 8px 16px;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            color: var(--color-text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .export-btn:hover {
+            border-color: var(--color-text-muted);
+            color: var(--color-text);
+        }
+
+        /* 视频列表 */
+        .video-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .video-item {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            transition: border-color 0.15s;
+        }
+
+        .video-item:hover {
+            border-color: #D1D5DB;
+        }
+
+        .video-thumb {
+            width: 180px;
+            height: 120px;
+            border-radius: 6px;
+            background: var(--color-bg-tertiary);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .video-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .video-meta {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            margin-bottom: 12px;
+        }
+
+        .video-stats {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 12px;
+        }
+
+        .video-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .video-stat-label {
+            font-size: 11px;
+            color: var(--color-text-muted);
+        }
+
+        .video-stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .video-platform {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            margin-top: auto;
+        }
+
+        .video-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .video-duration {
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .video-action-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg);
+            color: var(--color-text-secondary);
+        }
+
+        .video-action-btn:hover {
+            border-color: var(--color-text-muted);
+            color: var(--color-text);
+        }
+
+        .video-action-btn.primary {
+            background: var(--color-text);
+            border-color: var(--color-text);
+            color: white;
+        }
+
+        .video-action-btn.primary:hover {
+            background: #333;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--color-text-muted);
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+        }
+
+        /* 详情分页 */
+        .detail-pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+        <div class="logo">GemgenAI</div>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">菜单</div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="16"/>
+                            <line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                        添加视频
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        AI智能分析
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="1"/>
+                            <circle cx="12" cy="5" r="1"/>
+                            <circle cx="12" cy="19" r="1"/>
+                        </svg>
+                        账号监测
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="9" y1="3" x2="9" y2="21"/>
+                        </svg>
+                        智能体管理
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">设置</div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        个人中心
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">D</div>
+                <div>
+                    <div class="user-name">多萝西</div>
+                    <div class="user-role">专业版</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main>
+        <!-- 列表页面 -->
+        <div class="list-page" id="listPage">
+            <!-- 顶部配置区 -->
+            <div class="config-section">
+                <div class="config-grid">
+                    <!-- 第一列：监测地址 -->
+                    <div class="config-card">
+                        <div class="config-card-title">添加创作者</div>
+                        <input type="text" class="config-input" placeholder="请输入作者首页链接">
+                    </div>
+
+                    <!-- 第二列：关联智能体 -->
+                    <div class="config-card">
+                        <div class="config-card-title">关联智能体</div>
+                        <select class="config-select">
+                            <option>请选择智能体</option>
+                            <option>AI分享家</option>
+                            <option>视频智囊</option>
+                        </select>
+                    </div>
+
+                    <!-- 第三列：提交按钮 -->
+                    <div class="config-card config-card-submit">
+                        <button class="submit-btn">
+                            开始提交
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 监测账号列表 -->
+            <div class="list-section">
+                <div class="list-header">
+                    <h2 class="list-title">追踪列表</h2>
+                </div>
+                <div class="list-filter">
+                    <div class="list-tabs">
+                        <div class="list-tab active">全部</div>
+                        <div class="list-tab">老吴</div>
+                        <div class="list-tab">营销王</div>
+                        <div class="list-tab">资深标题党</div>
+                        <div class="list-tab">AI分享家</div>
+                    </div>
+                </div>
+
+                <div class="account-grid">
+                    <!-- 账号卡片1 -->
+                    <div class="account-card" onclick="showDetail()">
+                        <div class="account-header">
+                            <div class="account-main">
+                                <div class="account-avatar">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                </div>
+                                <div class="account-info">
+                                    <div class="account-name">Ahrefs</div>
+                                    <a href="#" class="account-link" onclick="event.stopPropagation()">youtube.com/@AhsefsCom</a>
+                                </div>
+                            </div>
+                            <div class="account-actions">
+                                <button class="account-action-btn" onclick="event.stopPropagation()">编辑</button>
+                                <button class="account-action-btn delete" onclick="event.stopPropagation()">删除</button>
+                            </div>
+                        </div>
+                        <div class="account-stats">
+                            <div class="account-stat">
+                                <span class="account-stat-value">0</span>
+                                <span class="account-stat-label">累计作品数</span>
+                            </div>
+                            <div class="account-stat">
+                                <span class="account-stat-value">0</span>
+                                <span class="account-stat-label">发现新增数</span>
+                            </div>
+                            <div class="account-stat">
+                                <span class="account-stat-value">0</span>
+                                <span class="account-stat-label">累计运行次数</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 账号卡片2 -->
+                    <div class="account-card" onclick="showDetail()">
+                        <div class="account-header">
+                            <div class="account-main">
+                                <div class="account-avatar">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                </div>
+                                <div class="account-info">
+                                    <div class="account-name">与 Eric Siu 一起提升自我</div>
+                                    <a href="#" class="account-link" onclick="event.stopPropagation()">youtube.com/@LevelingUpOfficial</a>
+                                </div>
+                            </div>
+                            <div class="account-actions">
+                                <button class="account-action-btn" onclick="event.stopPropagation()">编辑</button>
+                                <button class="account-action-btn delete" onclick="event.stopPropagation()">删除</button>
+                            </div>
+                        </div>
+                        <div class="account-stats">
+                            <div class="account-stat">
+                                <span class="account-stat-value">0</span>
+                                <span class="account-stat-label">累计作品数</span>
+                            </div>
+                            <div class="account-stat">
+                                <span class="account-stat-value">0</span>
+                                <span class="account-stat-label">发现新增数</span>
+                            </div>
+                            <div class="account-stat">
+                                <span class="account-stat-value">0</span>
+                                <span class="account-stat-label">累计运行次数</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 账号卡片3 -->
+                    <div class="account-card" onclick="showDetail()">
+                        <div class="account-header">
+                            <div class="account-main">
+                                <div class="account-avatar">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                </div>
+                                <div class="account-info">
+                                    <div class="account-name">木子人工智能研究所</div>
+                                    <a href="#" class="account-link" onclick="event.stopPropagation()">youtube.com/channel/UCBCA9dE</a>
+                                </div>
+                            </div>
+                            <div class="account-actions">
+                                <button class="account-action-btn" onclick="event.stopPropagation()">编辑</button>
+                                <button class="account-action-btn delete" onclick="event.stopPropagation()">删除</button>
+                            </div>
+                        </div>
+                        <div class="account-stats">
+                            <div class="account-stat">
+                                <span class="account-stat-value">0</span>
+                                <span class="account-stat-label">累计作品数</span>
+                            </div>
+                            <div class="account-stat">
+                                <span class="account-stat-value">0</span>
+                                <span class="account-stat-label">发现新增数</span>
+                            </div>
+                            <div class="account-stat">
+                                <span class="account-stat-value">0</span>
+                                <span class="account-stat-label">累计运行次数</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分页 -->
+                <div class="pagination">
+                    <span class="pagination-info">共 3 条</span>
+                    <select class="pagination-select">
+                        <option>6条/页</option>
+                        <option>10条/页</option>
+                        <option>20条/页</option>
+                    </select>
+                    <button class="pagination-btn">&lt;</button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">&gt;</button>
+                    <span>前往</span>
+                    <input type="text" class="pagination-input" value="1">
+                    <span>页</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 详情页面 -->
+        <div class="detail-page" id="detailPage">
+            <div class="detail-header">
+                <div class="detail-header-top">
+                    <div class="detail-header-left">
+                        <div class="detail-back" onclick="hideDetail()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="15 18 9 12 15 6"/>
+                            </svg>
+                        </div>
+                        <div class="detail-avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="detail-info">
+                            <h1>小Lin说</h1>
+                            <a href="#" class="detail-link">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                </svg>
+                                https://www.youtube.com/@xiao_lin_shuo/videos
+                            </a>
+                        </div>
+                    </div>
+                    <div class="detail-header-right">
+                        <div class="detail-stats">
+                            <div class="detail-stat">
+                                <div class="detail-stat-value">0</div>
+                                <div class="detail-stat-label">累计作品数</div>
+                            </div>
+                            <div class="detail-stat">
+                                <div class="detail-stat-value">0</div>
+                                <div class="detail-stat-label">发现新增数</div>
+                            </div>
+                            <div class="detail-stat">
+                                <div class="detail-stat-value">0</div>
+                                <div class="detail-stat-label">累计运行次数</div>
+                            </div>
+                        </div>
+                        <div class="detail-meta">
+                            <span class="detail-platform">来源平台: <strong>YOUTUBE</strong></span>
+                            <span class="detail-agent">关联智能体: <strong>营销王</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-content">
+                <div class="detail-toolbar">
+                    <h2 class="detail-title">关联内容 (3)</h2>
+                    <div class="detail-actions">
+                        <button class="export-btn">导出结果</button>
+                    </div>
+                </div>
+
+                <div class="video-list">
+                    <!-- 视频项1 -->
+                    <div class="video-item">
+                        <div class="video-thumb">
+                            <div style="width:100%;height:100%;background:#E5E7EB;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:12px;">缩略图</div>
+                        </div>
+                        <div class="video-content">
+                            <div class="video-title">#painting #drawing #art #draw #streetdrawing</div>
+                            <div class="video-meta">发布时间: 2025-12-23 · 采集时间: 2025-12-23 10:44:00 · 视频ID: 7586896567026617622</div>
+                            <div class="video-stats">
+                                <div class="video-stat">
+                                    <span class="video-stat-label">播放</span>
+                                    <span class="video-stat-value">4.3k</span>
+                                </div>
+                                <div class="video-stat">
+                                    <span class="video-stat-label">点赞</span>
+                                    <span class="video-stat-value">110</span>
+                                </div>
+                                <div class="video-stat">
+                                    <span class="video-stat-label">评论</span>
+                                    <span class="video-stat-value">1</span>
+                                </div>
+                                <div class="video-stat">
+                                    <span class="video-stat-label">时长</span>
+                                    <span class="video-stat-value">1:01</span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="video-right">
+                            <div class="video-actions">
+                                <button class="video-action-btn primary">加入分析</button>
+                                <button class="video-action-btn">复制链接</button>
+                                <button class="video-action-btn">打开视频</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 视频项2 -->
+                    <div class="video-item">
+                        <div class="video-thumb">
+                            <div style="width:100%;height:100%;background:#E5E7EB;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:12px;">缩略图</div>
+                        </div>
+                        <div class="video-content">
+                            <div class="video-title">【無限HD】2024 TSE 台灣寫真博覽會 D3 JKF女郎走秀 2(8K 60p) TAIWAN SHOT EXPO</div>
+                            <div class="video-meta">发布时间: 2024-02-03 · 采集时间: 2025-12-23 07:52:38 · 视频ID: pZmwlYu8z1l</div>
+                            <div class="video-stats">
+                                <div class="video-stat">
+                                    <span class="video-stat-label">播放</span>
+                                    <span class="video-stat-value">92.5万</span>
+                                </div>
+                                <div class="video-stat">
+                                    <span class="video-stat-label">点赞</span>
+                                    <span class="video-stat-value">1.0万</span>
+                                </div>
+                                <div class="video-stat">
+                                    <span class="video-stat-label">评论</span>
+                                    <span class="video-stat-value">108</span>
+                                </div>
+                                <div class="video-stat">
+                                    <span class="video-stat-label">时长</span>
+                                    <span class="video-stat-value">10:34</span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="video-right">
+                            <div class="video-actions">
+                                <button class="video-action-btn primary">加入分析</button>
+                                <button class="video-action-btn">复制链接</button>
+                                <button class="video-action-btn">打开视频</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 视频项3 -->
+                    <div class="video-item">
+                        <div class="video-thumb">
+                            <div style="width:100%;height:100%;background:#E5E7EB;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:12px;">缩略图</div>
+                        </div>
+                        <div class="video-content">
+                            <div class="video-title">Macbook Pro 隱藏實力爆光！這才是正確的打開方式｜M4 Pro vs M4 Max｜彼得森</div>
+                            <div class="video-meta">发布时间: 2024-11-27 · 采集时间: 2025-12-20 13:42:08 · 视频ID: uu3ttDl4ys8</div>
+                            <div class="video-stats">
+                                <div class="video-stat">
+                                    <span class="video-stat-label">播放</span>
+                                    <span class="video-stat-value">12.0万</span>
+                                </div>
+                                <div class="video-stat">
+                                    <span class="video-stat-label">点赞</span>
+                                    <span class="video-stat-value">1.6k</span>
+                                </div>
+                                <div class="video-stat">
+                                    <span class="video-stat-label">评论</span>
+                                    <span class="video-stat-value">704</span>
+                                </div>
+                                <div class="video-stat">
+                                    <span class="video-stat-label">时长</span>
+                                    <span class="video-stat-value">17:02</span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="video-right">
+                            <div class="video-actions">
+                                <button class="video-action-btn primary">加入分析</button>
+                                <button class="video-action-btn">复制链接</button>
+                                <button class="video-action-btn">打开视频</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-pagination">
+                    <span>共 3 条</span>
+                    <select class="pagination-select">
+                        <option>10条/页</option>
+                        <option>20条/页</option>
+                    </select>
+                    <button class="pagination-btn">&lt;</button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">&gt;</button>
+                    <span>前往</span>
+                    <input type="text" class="pagination-input" value="1">
+                    <span>页</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 显示详情页
+        function showDetail() {
+            document.getElementById('listPage').classList.add('hidden');
+            document.getElementById('detailPage').classList.add('active');
+        }
+
+        // 隐藏详情页
+        function hideDetail() {
+            document.getElementById('listPage').classList.remove('hidden');
+            document.getElementById('detailPage').classList.remove('active');
+        }
+
+        // Tab切换
+        document.querySelectorAll('.list-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.list-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

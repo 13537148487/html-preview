@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GemgenAI - 视频内容，一目了然</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg: #FFFFFF;
+            --color-bg-secondary: #F5F5F5;
+            --color-border: #E5E5E5;
+            --color-text: #0A0A0A;
+            --color-text-secondary: #525252;
+            --color-text-muted: #A3A3A3;
+            --color-youtube: #FF0000;
+            --color-tiktok: #000000;
+            --color-facebook: #1877F2;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ================================
+           侧边栏 - 极简
+           ================================ */
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: var(--color-bg);
+            border-right: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 8px;
+            margin-bottom: 40px;
+        }
+
+        .logo-mark {
+            width: 34px;
+            height: 34px;
+            background: var(--color-text);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-mark span {
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-text);
+            letter-spacing: -0.3px;
+        }
+
+        .nav {
+            flex: 1;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 12px;
+            margin-bottom: 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: #F5F5F5;
+            color: var(--color-text);
+        }
+
+        .nav-item.active {
+            background: #F5F5F5;
+            color: var(--color-text);
+            font-weight: 600;
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .nav-section {
+            margin-bottom: 32px;
+        }
+
+        .sidebar-footer {
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .user-menu:hover {
+            background: #F5F5F5;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--color-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .user-plan {
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        /* ================================
+           主内容区
+           ================================ */
+        .main {
+            margin-left: 220px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 220px;
+            height: 64px;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 40px;
+            z-index: 100;
+        }
+
+        .language-select {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg);
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* ================================
+           Hero - 大气核心
+           ================================ */
+        .hero-section {
+            min-height: calc(100vh - 64px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 120px 60px 80px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 72px;
+            font-weight: 800;
+            color: var(--color-text);
+            letter-spacing: -3px;
+            line-height: 1.05;
+            margin-bottom: 24px;
+        }
+
+        .hero-subtitle {
+            font-size: 22px;
+            color: var(--color-text-secondary);
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .trust-bar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--color-text-muted);
+            margin-bottom: 56px;
+        }
+
+        .trust-bar strong {
+            color: var(--color-text);
+            font-weight: 600;
+        }
+
+        .trust-divider {
+            width: 1px;
+            height: 16px;
+            background: var(--color-border);
+        }
+
+        .trust-link {
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+
+        .trust-link:hover {
+            color: var(--color-text);
+        }
+
+        /* 搜索框 - 无边框阴影风格 */
+        .search-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 28px;
+        }
+
+        .search-box {
+            background: var(--color-bg);
+            border: none;
+            border-radius: 28px;
+            padding: 8px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .search-box:focus-within {
+            box-shadow: 0 8px 48px rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.1);
+        }
+
+        .search-input-row {
+            display: flex;
+            align-items: center;
+            padding: 20px 28px;
+            gap: 16px;
+        }
+
+        .search-icon {
+            width: 24px;
+            height: 24px;
+            color: #999;
+            flex-shrink: 0;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            font-size: 18px;
+            color: var(--color-text);
+            background: transparent;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        .search-btn {
+            padding: 16px 36px;
+            background: var(--color-text);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .search-btn:hover {
+            background: #333;
+            transform: scale(1.02);
+        }
+
+        .search-options {
+            display: none;
+            align-items: center;
+            gap: 20px;
+            padding: 0 28px 16px;
+            border-top: 1px solid var(--color-border);
+            margin-top: 8px;
+            padding-top: 16px;
+        }
+
+        .search-options.show {
+            display: flex;
+        }
+
+        .option-label {
+            font-size: 14px;
+            color: var(--color-text-muted);
+        }
+
+        .count-slider {
+            width: 120px;
+            height: 4px;
+            -webkit-appearance: none;
+            background: var(--color-border);
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        .count-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--color-text);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .count-display {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+            min-width: 30px;
+        }
+
+        .all-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            background: var(--color-bg);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .all-btn:hover,
+        .all-btn.active {
+            background: var(--color-text);
+            border-color: var(--color-text);
+            color: white;
+        }
+
+        .platform-tags {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--color-text-muted);
+            font-size: 14px;
+        }
+
+        .platform-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #F5F5F5;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+        }
+
+        .platform-tag svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .platform-tag.youtube svg { color: var(--color-youtube); }
+        .platform-tag.tiktok svg { color: var(--color-tiktok); }
+        .platform-tag.facebook svg { color: var(--color-facebook); }
+
+        /* ================================
+           下方内容区
+           ================================ */
+        .content-section {
+            padding: 80px 60px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--color-text);
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--color-text-secondary);
+        }
+
+        /* 功能卡片 */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            padding: 32px 24px;
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--color-text);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 20px;
+            background: #F5F5F5;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--color-text);
+        }
+
+        .feature-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: var(--color-text-muted);
+            line-height: 1.5;
+        }
+
+        /* 平台卡片 */
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .platform-card {
+            padding: 32px;
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .platform-card:hover {
+            border-color: var(--color-text);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+        }
+
+        .platform-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .platform-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: #F5F5F5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .platform-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .platform-icon.youtube svg { color: var(--color-youtube); }
+        .platform-icon.tiktok svg { color: var(--color-tiktok); }
+        .platform-icon.facebook svg { color: var(--color-facebook); }
+
+        .platform-status {
+            font-size: 12px;
+            font-weight: 600;
+            color: #22c55e;
+        }
+
+        .platform-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+
+        .platform-desc {
+            font-size: 15px;
+            color: var(--color-text-muted);
+            line-height: 1.5;
+        }
+
+        /* 分析结果 */
+        .results-section {
+            display: none;
+            padding: 48px 60px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .status-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: var(--color-bg-secondary);
+            border-radius: 24px;
+        }
+
+        .status-spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--color-border);
+            border-top-color: var(--color-text);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .status-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .status-num {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--color-text);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .status-hint {
+            font-size: 13px;
+            color: var(--color-text-muted);
+        }
+
+        .results-filters {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            background: var(--color-bg);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--color-text);
+            border-color: var(--color-text);
+            color: white;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .video-card {
+            display: flex;
+            flex-direction: row;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.15s;
+            height: 120px;
+        }
+
+        .video-card:hover {
+            border-color: var(--color-text);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .video-thumbnail {
+            width: 140px;
+            min-width: 140px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-thumbnail .play-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-thumbnail .play-icon svg {
+            width: 14px;
+            height: 14px;
+            color: #333;
+            margin-left: 2px;
+        }
+
+        .video-duration {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            padding: 2px 5px;
+            background: rgba(0,0,0,0.8);
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .video-info {
+            flex: 1;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .video-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text);
+            line-height: 1.35;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .video-meta {
+            font-size: 10px;
+            color: var(--color-text-muted);
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .video-stats {
+            display: flex;
+            gap: 8px;
+            font-size: 10px;
+            color: var(--color-text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .video-stats span {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: auto;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: 1px solid var(--color-border);
+            border-radius: 5px;
+            background: var(--color-bg);
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .action-btn:hover {
+            border-color: var(--color-text);
+            color: var(--color-text);
+        }
+
+        .action-btn.primary {
+            background: var(--color-text);
+            border-color: var(--color-text);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            opacity: 0.9;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--color-text);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 9999;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* 用户弹窗 */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        .user-popup {
+            position: absolute;
+            bottom: 70px;
+            left: 12px;
+            right: 12px;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+            padding: 10px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .user-popup.show {
+            display: block;
+        }
+
+        .popup-header {
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--color-border);
+            margin-bottom: 6px;
+        }
+
+        .popup-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--color-text);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 6px;
+        }
+
+        .popup-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .popup-email {
+            font-size: 11px;
+            color: var(--color-text-muted);
+            margin-bottom: 4px;
+        }
+
+        .popup-plan {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--color-text);
+            color: white;
+            font-size: 10px;
+            font-weight: 500;
+            border-radius: 20px;
+        }
+
+        .popup-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .popup-item:hover {
+            background: #F5F5F5;
+            color: var(--color-text);
+        }
+
+        .popup-item svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .popup-promo {
+            margin: 6px 0;
+            padding: 10px;
+            background: var(--color-text);
+            border-radius: 8px;
+            color: white;
+        }
+
+        .promo-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .promo-desc {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-bottom: 6px;
+        }
+
+        .promo-btn {
+            width: 100%;
+            padding: 6px;
+            background: white;
+            color: var(--color-text);
+            border: none;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .popup-logout {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+            cursor: pointer;
+        }
+
+        .popup-logout:hover {
+            color: #ef4444;
+        }
+
+        .popup-logout svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1200px) {
+            .features-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .hero-title {
+                font-size: 56px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .main {
+                margin-left: 0;
+            }
+            .topbar {
+                left: 0;
+            }
+            .hero-title {
+                font-size: 40px;
+            }
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .platforms-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toast" id="toast">功能开发中</div>
+    <div class="overlay" id="overlay" onclick="closeUserPopup()"></div>
+
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-mark"><span>G</span></div>
+            <span class="logo-text">GemgenAI</span>
+        </div>
+
+        <nav class="nav">
+            <div class="nav-section">
+                <div class="nav-label">菜单</div>
+                <div class="nav-item active" onclick="showToast()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="10 8 16 12 10 16 10 8"/>
+                    </svg>
+                    <span>添加视频</span>
+                </div>
+                <div class="nav-item" onclick="showToast()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                    <span>AI智能分析</span>
+                </div>
+                <div class="nav-item" onclick="showToast()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <span>账号监测</span>
+                </div>
+                <div class="nav-item" onclick="showToast()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <circle cx="15.5" cy="8.5" r="1.5"/>
+                        <path d="M9 15h6"/>
+                    </svg>
+                    <span>智能体管理</span>
+                </div>
+            </div>
+            <div class="nav-section">
+                <div class="nav-label">设置</div>
+                <div class="nav-item" onclick="showToast()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <span>个人中心</span>
+                </div>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-popup" id="userPopup">
+                <div class="popup-header">
+                    <div class="popup-avatar">D</div>
+                    <div class="popup-name">Dorothy D. Stevens</div>
+                    <div class="popup-email">dorothydstevens8@gmail.com</div>
+                    <span class="popup-plan">专业版</span>
+                </div>
+                <div class="popup-item" onclick="showToast()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    设置
+                </div>
+                <div class="popup-item" onclick="showToast()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    个人中心
+                </div>
+                <div class="popup-promo">
+                    <div class="promo-title">联盟合伙人 · 返佣30%</div>
+                    <div class="promo-desc">邀请好友注册，每单最高赚 $50</div>
+                    <button class="promo-btn" onclick="showToast()">了解详情</button>
+                </div>
+                <div class="popup-logout" onclick="showToast()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    退出登录
+                </div>
+            </div>
+            <div class="user-menu" onclick="toggleUserPopup()">
+                <div class="user-avatar">D</div>
+                <div class="user-info">
+                    <div class="user-name">Dorothy D. Stevens</div>
+                    <div class="user-plan">专业版</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main">
+        <div class="topbar">
+            <select class="language-select">
+                <option value="zh-CN">简体中文</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+
+        <!-- Hero区域 -->
+        <section class="hero-section">
+            <h1 class="hero-title">视频内容<br>一目了然</h1>
+            <p class="hero-subtitle">粘贴链接，AI帮你提取关键信息</p>
+            <div class="trust-bar">
+                <span><strong>10,000+</strong> 视频已分析</span>
+                <div class="trust-divider"></div>
+                <span><strong>98%</strong> 用户好评</span>
+                <div class="trust-divider"></div>
+                <span class="trust-link" onclick="showToast()">查看演示</span>
+                <div class="trust-divider"></div>
+                <span class="trust-link" onclick="showToast()">了解更多</span>
+            </div>
+
+            <div class="search-container">
+                <div class="search-box">
+                    <div class="search-input-row">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input type="text" class="search-input" placeholder="输入视频链接或创作者主页 URL" id="searchInput">
+                        <button class="search-btn" onclick="showResults()">开始分析</button>
+                    </div>
+                    <div class="search-options" id="searchOptions">
+                        <span class="option-label">获取数量</span>
+                        <input type="range" class="count-slider" min="1" max="100" value="30" id="countSlider" oninput="updateCount(this.value)">
+                        <span class="count-display" id="countDisplay">30</span>
+                        <button class="all-btn" id="allBtn" onclick="toggleAll()">全部</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="platform-tags">
+                <span>支持平台</span>
+                <span class="platform-tag youtube">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                    YouTube
+                </span>
+                <span class="platform-tag tiktok">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                    TikTok
+                </span>
+                <span class="platform-tag facebook">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    Facebook
+                </span>
+            </div>
+        </section>
+
+        <!-- 分析结果 -->
+        <section class="results-section" id="resultsSection">
+            <div class="results-header">
+                <div class="status-group">
+                    <div class="status-badge">
+                        <div class="status-spinner"></div>
+                        <span class="status-text">正在获取</span>
+                        <span class="status-num">25/30</span>
+                    </div>
+                    <span class="status-hint">预计1-3分钟，您可以浏览其他功能</span>
+                </div>
+                <div class="results-filters">
+                    <button class="filter-btn active">播放数</button>
+                    <button class="filter-btn">点赞</button>
+                    <button class="filter-btn">评论</button>
+                </div>
+            </div>
+            <div class="results-grid">
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <div class="play-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        </div>
+                        <span class="video-duration">7:21</span>
+                    </div>
+                    <div class="video-info">
+                        <h4 class="video-title">老屋翻修｜装潢花费公开｜12步搞定施工流程</h4>
+                        <div class="video-meta">2024-04-24 · ID: 6Ypl4hDdEPq</div>
+                        <div class="video-stats">
+                            <span>👁 63.7K</span>
+                            <span>👍 1.5K</span>
+                            <span>💬 151</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn primary" onclick="showToast()">加入分析</button>
+                            <button class="action-btn" onclick="showToast()">查看原视频</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <div class="play-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        </div>
+                        <span class="video-duration">18:43</span>
+                    </div>
+                    <div class="video-info">
+                        <h4 class="video-title">AI影片生成教学！新手用Nano Banana完整示范</h4>
+                        <div class="video-meta">2025-11-30 · ID: UXaOXuJPoA</div>
+                        <div class="video-stats">
+                            <span>👁 59.7K</span>
+                            <span>👍 2.3K</span>
+                            <span>💬 395</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn primary" onclick="showToast()">加入分析</button>
+                            <button class="action-btn" onclick="showToast()">查看原视频</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <div class="video-thumbnail">
+                        <div class="play-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        </div>
+                        <span class="video-duration">12:05</span>
+                    </div>
+                    <div class="video-info">
+                        <h4 class="video-title">2024年最值得买的相机推荐｜摄影入门指南</h4>
+                        <div class="video-meta">2024-03-15 · ID: Kp8mNxYz3Qw</div>
+                        <div class="video-stats">
+                            <span>👁 45.2K</span>
+                            <span>👍 3.1K</span>
+                            <span>💬 287</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn primary" onclick="showToast()">加入分析</button>
+                            <button class="action-btn" onclick="showToast()">查看原视频</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 功能区域 -->
+        <section class="content-section">
+            <div class="section-header">
+                <h2 class="section-title">强大的视频分析能力</h2>
+                <p class="section-subtitle">AI真正理解视频内容，而不只是转录文字</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card" onclick="showToast()">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-name">理解视频</h3>
+                    <p class="feature-desc">AI看懂画面内容，提取关键信息</p>
+                </div>
+                <div class="feature-card" onclick="showToast()">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-name">视频对话</h3>
+                    <p class="feature-desc">针对视频内容提问互动</p>
+                </div>
+                <div class="feature-card" onclick="showToast()">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-name">生成报告</h3>
+                    <p class="feature-desc">输出分析报告，可导出分享</p>
+                </div>
+                <div class="feature-card" onclick="showToast()">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-name">监测账号</h3>
+                    <p class="feature-desc">追踪创作者更新动态</p>
+                </div>
+                <div class="feature-card" onclick="showToast()">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <circle cx="15.5" cy="8.5" r="1.5"/>
+                            <path d="M9 15h6"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-name">创建智能体</h3>
+                    <p class="feature-desc">定制专属AI分析助手</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 平台区域 -->
+        <section class="content-section">
+            <div class="section-header">
+                <h2 class="section-title">支持主流平台</h2>
+                <p class="section-subtitle">覆盖全球最热门的视频平台</p>
+            </div>
+            <div class="platforms-grid">
+                <div class="platform-card" onclick="showToast()">
+                    <div class="platform-card-header">
+                        <div class="platform-icon youtube">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                        </div>
+                        <span class="platform-status">● 可用</span>
+                    </div>
+                    <h3 class="platform-name">YouTube</h3>
+                    <p class="platform-desc">理解视频内容，对话提问，生成分析报告</p>
+                </div>
+                <div class="platform-card" onclick="showToast()">
+                    <div class="platform-card-header">
+                        <div class="platform-icon tiktok">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                        </div>
+                        <span class="platform-status">● 可用</span>
+                    </div>
+                    <h3 class="platform-name">TikTok</h3>
+                    <p class="platform-desc">解析短视频，监测账号，追踪更新动态</p>
+                </div>
+                <div class="platform-card" onclick="showToast()">
+                    <div class="platform-card-header">
+                        <div class="platform-icon facebook">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </div>
+                        <span class="platform-status">● 可用</span>
+                    </div>
+                    <h3 class="platform-name">Facebook</h3>
+                    <p class="platform-desc">分析社交内容，提取洞察信息</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchOptions = document.getElementById('searchOptions');
+
+        searchInput.addEventListener('input', function() {
+            searchOptions.classList.toggle('show', this.value.trim().length > 0);
+        });
+
+        function showToast(msg = '功能开发中') {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        function updateCount(val) {
+            document.getElementById('countDisplay').textContent = val;
+            document.getElementById('allBtn').classList.remove('active');
+        }
+
+        function toggleAll() {
+            document.getElementById('allBtn').classList.toggle('active');
+        }
+
+        function showResults() {
+            if (searchInput.value.trim()) {
+                document.getElementById('resultsSection').classList.add('show');
+                document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function toggleUserPopup() {
+            document.getElementById('userPopup').classList.toggle('show');
+            document.getElementById('overlay').classList.toggle('show');
+        }
+
+        function closeUserPopup() {
+            document.getElementById('userPopup').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

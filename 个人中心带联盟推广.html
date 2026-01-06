@@ -1,0 +1,2747 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GemgenAI - 设置</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg: #FAFAFA;
+            --color-bg-card: #FFFFFF;
+            --color-border: #E5E5E5;
+            --color-text: #0A0A0A;
+            --color-text-secondary: #525252;
+            --color-text-muted: #A3A3A3;
+            --color-primary: #0A0A0A;
+            --color-danger: #DC2626;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* ================================
+           顶部导航
+           ================================ */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--color-bg);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo:hover {
+            opacity: 0.8;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: #0A0A0A;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-text);
+            letter-spacing: -0.3px;
+        }
+
+        /* ================================
+           整体布局 - 居中
+           ================================ */
+        .settings-container {
+            display: flex;
+            max-width: 1000px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding: 100px 24px 60px;
+        }
+
+        /* ================================
+           左侧导航
+           ================================ */
+        .settings-nav {
+            width: 180px;
+            padding-right: 32px;
+            flex-shrink: 0;
+        }
+
+        .settings-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 24px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-group-title {
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--color-text-muted);
+            padding: 20px 12px 8px;
+        }
+
+        .nav-group-title:first-child {
+            padding-top: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 1px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: var(--color-text);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.15s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            background: #F0F0F0;
+        }
+
+        .nav-link.active {
+            background: #E8E8E8;
+            font-weight: 500;
+        }
+
+        /* ================================
+           右侧内容区
+           ================================ */
+        .settings-content {
+            flex: 1;
+            max-width: 680px;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 24px;
+        }
+
+        /* ================================
+           设置项行
+           ================================ */
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .setting-row:first-child {
+            padding-top: 0;
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-label {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--color-text);
+        }
+
+        .setting-desc {
+            font-size: 13px;
+            color: var(--color-text-muted);
+            margin-top: 2px;
+        }
+
+        .setting-value {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .setting-value .copy-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--color-text-muted);
+            transition: all 0.15s;
+        }
+
+        .setting-value .copy-btn:hover {
+            background: #F0F0F0;
+            color: var(--color-text);
+        }
+
+        .setting-value .copy-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ================================
+           按钮样式
+           ================================ */
+        .btn {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-outline {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+
+        .btn-outline:hover {
+            border-color: #D4D4D4;
+            background: #F5F5F5;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            border: 1px solid var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #262626;
+        }
+
+        .btn-danger {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            color: var(--color-danger);
+        }
+
+        .btn-danger:hover {
+            background: #FEF2F2;
+            border-color: #FECACA;
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ================================
+           头像样式
+           ================================ */
+        .avatar-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #F5F5F5;
+            border: 1px solid var(--color-border);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-danger-fill {
+            background: var(--color-danger);
+            border: 1px solid var(--color-danger);
+            color: white;
+        }
+
+        .btn-danger-fill:hover {
+            background: #B91C1C;
+        }
+
+        /* ================================
+           分隔线和子标题
+           ================================ */
+        .section-divider {
+            height: 1px;
+            background: var(--color-border);
+            margin: 24px 0;
+        }
+
+        .subsection-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 16px;
+        }
+
+        /* ================================
+           会话表格
+           ================================ */
+        .session-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .session-table th,
+        .session-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .session-table th {
+            font-weight: 500;
+            color: var(--color-text-muted);
+            font-size: 12px;
+        }
+
+        .session-table td {
+            color: var(--color-text-secondary);
+        }
+
+        .session-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .device-name {
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .device-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            font-size: 11px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        .device-badge.current {
+            background: #DCFCE7;
+            color: #15803D;
+        }
+
+        .more-btn {
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            padding: 4px 8px;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .more-btn:hover {
+            color: var(--color-text);
+        }
+
+        /* ================================
+           套餐标签
+           ================================ */
+        .plan-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 4px;
+            background: #F5F5F5;
+            color: var(--color-text);
+        }
+
+        /* ================================
+           内联用量条
+           ================================ */
+        .usage-bar-inline {
+            margin-top: 8px;
+            max-width: 280px;
+        }
+
+        .usage-text .used {
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .usage-text .used.danger-text {
+            color: var(--color-danger);
+        }
+
+        /* ================================
+           邀请链接框
+           ================================ */
+        .invite-link-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #F5F5F5;
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .invite-link-text {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            font-family: monospace;
+        }
+
+        /* ================================
+           内联Tab切换
+           ================================ */
+        .tab-inline {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .tab-inline-btn {
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-bottom: -1px;
+        }
+
+        .tab-inline-btn:hover {
+            color: var(--color-text);
+        }
+
+        .tab-inline-btn.active {
+            color: var(--color-text);
+            border-bottom-color: var(--color-text);
+        }
+
+        .subtab-content {
+            display: none;
+        }
+
+        .subtab-content.active {
+            display: block;
+        }
+
+        .empty-cell {
+            text-align: center;
+            padding: 40px 20px !important;
+            color: var(--color-text-muted);
+        }
+
+        /* ================================
+           可点击行和箭头图标
+           ================================ */
+        .setting-row.clickable {
+            cursor: pointer;
+            transition: background 0.15s;
+            margin: 0 -12px;
+            padding-left: 12px;
+            padding-right: 12px;
+            border-radius: 6px;
+            border-bottom: none;
+        }
+
+        .setting-row.clickable:hover {
+            background: #F5F5F5;
+        }
+
+        .arrow-icon {
+            color: var(--color-text-muted);
+        }
+
+        .arrow-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ================================
+           取消订阅链接
+           ================================ */
+        .cancel-link {
+            margin-top: 32px;
+            padding-top: 16px;
+            font-size: 13px;
+            color: var(--color-text-muted);
+        }
+
+        .cancel-link a {
+            color: var(--color-text-muted);
+            text-decoration: underline;
+        }
+
+        .cancel-link a:hover {
+            color: var(--color-text-secondary);
+        }
+
+        .danger-link {
+            margin-top: 32px;
+            padding-top: 16px;
+            font-size: 13px;
+            color: var(--color-text-muted);
+        }
+
+        .danger-link a {
+            color: var(--color-text-muted);
+            text-decoration: underline;
+        }
+
+        .danger-link a:hover {
+            color: var(--color-text-secondary);
+        }
+
+        .link-text {
+            color: var(--color-primary);
+            text-decoration: underline;
+        }
+
+        .link-text:hover {
+            color: #262626;
+        }
+
+        .credit-hint {
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--color-text-muted);
+        }
+
+        /* ================================
+           升级引导卡片
+           ================================ */
+        .upgrade-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #F5F5F5;
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin-top: 20px;
+        }
+
+        .upgrade-content {
+            flex: 1;
+        }
+
+        .upgrade-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 4px;
+        }
+
+        .upgrade-desc {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+
+        /* ================================
+           套餐权益
+           ================================ */
+        .plan-benefits {
+            padding: 12px 0 12px 16px;
+            border-left: 2px solid var(--color-border);
+            margin: -8px 0 8px 0;
+        }
+
+        .benefit-item {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            padding: 4px 0;
+        }
+
+        /* ================================
+           状态文字
+           ================================ */
+        .status-text {
+            font-size: 13px;
+        }
+
+        .status-text.success {
+            color: #15803D;
+        }
+
+        .status-text.danger {
+            color: var(--color-danger);
+        }
+
+        .status-text.pending {
+            color: var(--color-text-muted);
+        }
+
+        /* ================================
+           联盟推广卡片
+           ================================ */
+        .referral-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #F5F5F5;
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin-top: 24px;
+        }
+
+        .referral-content {
+            flex: 1;
+        }
+
+        .referral-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 4px;
+        }
+
+        .referral-desc {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+
+        /* ================================
+           弹窗增强样式
+           ================================ */
+        .modal-lg {
+            max-width: 720px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: var(--color-text-muted);
+            transition: color 0.15s;
+        }
+
+        .modal-close:hover {
+            color: var(--color-text);
+        }
+
+        .modal-close svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 套餐弹窗 */
+        .plan-period-hint {
+            text-align: center;
+            font-size: 13px;
+            color: #15803D;
+            margin-top: 12px;
+        }
+
+        .plan-card-tagline {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .plan-card-value {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .plan-card-savings {
+            display: inline-block;
+            background: #DCFCE7;
+            color: #15803D;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+
+        .plan-card-footer {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+            text-align: center;
+        }
+
+        /* 加油包弹窗 */
+        .credits-hero {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .credits-hero-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+
+        .credits-hero-desc {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        .credits-benefits {
+            background: #F5F5F5;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+        }
+
+        .credits-benefit-item {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            padding: 4px 0;
+        }
+
+        .credit-card {
+            position: relative;
+            flex: 1;
+            background: #FFFFFF;
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .credit-card:hover {
+            border-color: var(--color-text);
+        }
+
+        .credit-card.selected {
+            border-color: var(--color-text);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .credit-card-tag {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-primary);
+            color: #FFFFFF;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 4px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .credit-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 12px;
+        }
+
+        .credit-card-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .credit-card-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .credit-card-credits {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .credit-card-bonus {
+            font-size: 12px;
+            color: #15803D;
+            margin-bottom: 8px;
+        }
+
+        .credit-card-estimate {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            margin-bottom: 16px;
+        }
+
+        .credit-card-btn {
+            width: 100%;
+        }
+
+        .credits-lookup {
+            background: #F5F5F5;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-top: 24px;
+        }
+
+        .credits-lookup-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+
+        .credits-lookup-item {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+
+        .billing-hint {
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        /* ================================
+           开关按钮
+           ================================ */
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #D4D4D4;
+            transition: 0.2s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.2s;
+            border-radius: 50%;
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background-color: var(--color-primary);
+        }
+
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* ================================
+           状态标签
+           ================================ */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 4px;
+        }
+
+        .status-badge.success {
+            background: #DCFCE7;
+            color: #15803D;
+        }
+
+        .status-badge.pending {
+            background: #FEF3C7;
+            color: #B45309;
+        }
+
+        /* ================================
+           统计卡片
+           ================================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        /* ================================
+           下拉菜单
+           ================================ */
+        .action-cell {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            min-width: 100px;
+            z-index: 100;
+        }
+
+        .dropdown-item {
+            padding: 10px 16px;
+            font-size: 14px;
+            color: var(--color-text);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .dropdown-item:hover {
+            background: #F5F5F5;
+        }
+
+        .dropdown-item:first-child {
+            border-radius: 6px 6px 0 0;
+        }
+
+        .dropdown-item:last-child {
+            border-radius: 0 0 6px 6px;
+        }
+
+        .stat-card {
+            background: #F9FAFB;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--color-text-muted);
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        /* ================================
+           卡片样式
+           ================================ */
+        .card {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .card-badge {
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 20px;
+            background: #F5F5F5;
+            color: var(--color-text-secondary);
+        }
+
+        /* ================================
+           用量进度条
+           ================================ */
+        .usage-item {
+            margin-bottom: 24px;
+        }
+
+        .usage-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .usage-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .usage-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .usage-value {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+
+        .usage-bar {
+            height: 6px;
+            background: #E5E5E5;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .usage-bar-fill {
+            height: 100%;
+            background: #A3A3A3;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .usage-bar-fill.warning {
+            background: #F59E0B;
+        }
+
+        .usage-bar-fill.danger {
+            background: var(--color-danger);
+        }
+
+        /* ================================
+           表格样式
+           ================================ */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .data-table th {
+            font-weight: 500;
+            color: var(--color-text-muted);
+            background: #FAFAFA;
+        }
+
+        .data-table td {
+            color: var(--color-text);
+        }
+
+        .data-table tbody tr:hover {
+            background: #FAFAFA;
+        }
+
+        /* ================================
+           空状态
+           ================================ */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--color-text-muted);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+        }
+
+        /* ================================
+           帮助中心链接列表
+           ================================ */
+        .help-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            text-decoration: none;
+            color: var(--color-text);
+            transition: all 0.15s;
+        }
+
+        .help-link:hover {
+            border-color: #D4D4D4;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .help-link-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .help-link-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: #F5F5F5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .help-link-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-text-secondary);
+        }
+
+        .help-link-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .help-link-desc {
+            font-size: 12px;
+            color: var(--color-text-muted);
+        }
+
+        .help-link-arrow {
+            color: var(--color-text-muted);
+        }
+
+        .help-link-arrow svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ================================
+           弹窗样式
+           ================================ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--color-bg-card);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* ================================
+           套餐选择卡片
+           ================================ */
+        .plan-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 24px;
+        }
+
+        .plan-toggle-btn {
+            padding: 10px 24px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-card);
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .plan-toggle-btn:first-child {
+            border-radius: 8px 0 0 8px;
+        }
+
+        .plan-toggle-btn:last-child {
+            border-radius: 0 8px 8px 0;
+            border-left: none;
+        }
+
+        .plan-toggle-btn.active {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+
+        .plan-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .plan-card {
+            border: 2px solid var(--color-border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+        }
+
+        .plan-card:hover {
+            border-color: #D4D4D4;
+        }
+
+        .plan-card.selected {
+            border-color: var(--color-primary);
+        }
+
+        .plan-card-badge {
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 20px;
+        }
+
+        .plan-card-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 4px;
+        }
+
+        .plan-card-desc {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            margin-bottom: 16px;
+        }
+
+        .plan-card-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 16px;
+        }
+
+        .plan-card-price span {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--color-text-muted);
+        }
+
+        .plan-card-features {
+            list-style: none;
+        }
+
+        .plan-card-features li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .plan-card-features li svg {
+            width: 16px;
+            height: 16px;
+            color: #22C55E;
+            flex-shrink: 0;
+        }
+
+        /* ================================
+           积分包卡片
+           ================================ */
+        .credit-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .credit-card {
+            border: 2px solid var(--color-border);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+        }
+
+        .credit-card:hover {
+            border-color: #D4D4D4;
+        }
+
+        .credit-card.selected {
+            border-color: var(--color-primary);
+        }
+
+        .credit-card-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 4px;
+        }
+
+        .credit-card-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+
+        .credit-card-credits {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .credit-card-bonus {
+            font-size: 12px;
+            color: #22C55E;
+            font-weight: 500;
+        }
+
+        /* ================================
+           表单元素
+           ================================ */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 14px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            background: var(--color-bg-card);
+            color: var(--color-text);
+            transition: all 0.15s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .form-input::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            margin-top: 6px;
+        }
+
+        /* ================================
+           Tab子导航
+           ================================ */
+        .sub-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .sub-tab {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            background: var(--color-bg-card);
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .sub-tab:hover {
+            border-color: #D4D4D4;
+        }
+
+        .sub-tab.active {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+
+        /* ================================
+           移动端适配
+           ================================ */
+        @media (max-width: 768px) {
+            .settings-container {
+                flex-direction: column;
+                padding: 24px 16px;
+            }
+
+            .settings-nav {
+                width: 100%;
+                padding-right: 0;
+                padding-bottom: 16px;
+                margin-bottom: 24px;
+                border-bottom: 1px solid var(--color-border);
+            }
+
+            .settings-title {
+                margin-bottom: 16px;
+            }
+
+            .nav-menu {
+                display: flex;
+                overflow-x: auto;
+                gap: 8px;
+                padding-bottom: 8px;
+            }
+
+            .nav-item {
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+
+            .nav-link {
+                white-space: nowrap;
+            }
+
+            .settings-content {
+                max-width: 100%;
+            }
+
+            .setting-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .plan-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .credit-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                max-width: 100%;
+                margin: 16px;
+            }
+
+            .session-table {
+                font-size: 12px;
+            }
+
+            .session-table th,
+            .session-table td {
+                padding: 8px 6px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="top-header">
+        <a href="https://applet.gemgen.vip/" class="logo">
+            <div class="logo-mark">G</div>
+            <span class="logo-text">GemgenAI</span>
+        </a>
+    </header>
+
+    <div class="settings-container">
+        <!-- 左侧导航 -->
+        <nav class="settings-nav">
+            <h1 class="settings-title">设置</h1>
+            <ul class="nav-menu">
+                <li class="nav-group-title">概览</li>
+                <li class="nav-item">
+                    <a class="nav-link active" data-tab="profile">个人信息</a>
+                </li>
+
+                <li class="nav-group-title">消费中心</li>
+                <li class="nav-item">
+                    <a class="nav-link" data-tab="subscription">订阅管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-tab="usage">用量统计</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-tab="billing">账单记录</a>
+                </li>
+
+                <li class="nav-group-title">联盟营销</li>
+                <li class="nav-item">
+                    <a class="nav-link" data-tab="referrals">联盟记录</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-tab="promo">联盟优惠码</a>
+                </li>
+
+                <li class="nav-group-title">设置与偏好</li>
+                <li class="nav-item">
+                    <a class="nav-link" data-tab="language">语言与时区</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-tab="notifications">通知偏好</a>
+                </li>
+
+                <li class="nav-group-title">使用与帮助</li>
+                <li class="nav-item">
+                    <a class="nav-link" data-tab="help">帮助中心</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-tab="privacy">隐私与数据</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-tab="legal">法律条款</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- 右侧内容区 -->
+        <main class="settings-content">
+            <!-- Profile -->
+            <section class="content-section active" id="profile">
+                <h2 class="section-title">个人信息</h2>
+                
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">头像</div>
+                    </div>
+                    <div class="avatar-wrapper">
+                        <div class="avatar">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Dorothy" alt="头像">
+                        </div>
+                        <button class="btn btn-outline btn-sm">更换</button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">ID</div>
+                    </div>
+                    <div class="setting-value">
+                        1782456
+                        <button class="copy-btn" title="复制">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">昵称</div>
+                    </div>
+                    <div class="setting-value">多萝西·D·史蒂文斯</div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">邮箱</div>
+                    </div>
+                    <div class="setting-value">dorothydstevens8@gmail.com</div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">邀请码</div>
+                    </div>
+                    <div class="setting-value">
+                        938197305
+                        <button class="copy-btn" title="复制">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">注册时间</div>
+                    </div>
+                    <div class="setting-value">2025-12-17 10:47:12</div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">最后登录</div>
+                    </div>
+                    <div class="setting-value">-</div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">退出所有设备</div>
+                    </div>
+                    <button class="btn btn-outline">退出登录</button>
+                </div>
+            </section>
+
+            <!-- Subscription -->
+            <section class="content-section" id="subscription">
+                <h2 class="section-title">订阅管理</h2>
+                
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">当前套餐</div>
+                    </div>
+                    <div class="setting-value">
+                        <span class="plan-badge">专业版</span>
+                    </div>
+                </div>
+
+                <div class="plan-benefits">
+                    <div class="benefit-item">AI 视频分析 200 分钟/月</div>
+                    <div class="benefit-item">AI 对话分析 500 万 token</div>
+                    <div class="benefit-item">账号监测 5 个</div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">付费方式</div>
+                    </div>
+                    <div class="setting-value">月度</div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">续费时间</div>
+                    </div>
+                    <div class="setting-value">2026-01-22 20:38:00</div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">续费或升级套餐</div>
+                        <div class="setting-desc">升级到更高版本以获取更多功能和用量。</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('planModal')">续费/升级</button>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">购买加油包</div>
+                        <div class="setting-desc">额度不足时随买随用，积分实时到账。</div>
+                    </div>
+                    <button class="btn btn-outline" onclick="openModal('creditsModal')">购买加油包</button>
+                </div>
+
+                <div class="cancel-link">
+                    需要取消订阅？<a href="#" onclick="return false;">点击这里</a>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="referral-card">
+                    <div class="referral-content">
+                        <div class="referral-title">邀请好友，赚取佣金</div>
+                        <div class="referral-desc">每成功邀请一位付费用户，获得高额佣金。</div>
+                    </div>
+                    <button class="btn btn-outline" onclick="document.querySelector('[data-tab=referrals]').click()">立即邀请</button>
+                </div>
+            </section>
+
+            <!-- Usage -->
+            <section class="content-section" id="usage">
+                <h2 class="section-title">用量统计</h2>
+
+                <h3 class="subsection-title">套餐用量</h3>
+                
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">视频理解分钟数</div>
+                        <div class="usage-bar-inline">
+                            <div class="usage-bar">
+                                <div class="usage-bar-fill danger" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setting-value">
+                        <span class="usage-text">剩余 <span class="used danger-text">0</span> / 200 分钟</span>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">对话令牌上限</div>
+                        <div class="usage-bar-inline">
+                            <div class="usage-bar">
+                                <div class="usage-bar-fill" style="width: 97.3%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setting-value">
+                        <span class="usage-text">剩余 <span class="used">4,864,648</span> / 5,000,000</span>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">账号监测数量</div>
+                        <div class="usage-bar-inline">
+                            <div class="usage-bar">
+                                <div class="usage-bar-fill" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setting-value">
+                        <span class="usage-text">剩余 <span class="used">5</span> / 5 个</span>
+                    </div>
+                </div>
+
+                <div class="upgrade-card">
+                    <div class="upgrade-content">
+                        <div class="upgrade-title">升级套餐，解锁更多用量</div>
+                        <div class="upgrade-desc">获取更多视频分析分钟数、对话令牌和监测账号。</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('planModal')">查看套餐方案</button>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <h3 class="subsection-title">加油包用量</h3>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">加油包积分</div>
+                        <div class="usage-bar-inline">
+                            <div class="usage-bar">
+                                <div class="usage-bar-fill" style="width: 89.7%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setting-value">
+                        <span class="usage-text">剩余 <span class="used">82,500</span> / 92,000 积分</span>
+                    </div>
+                </div>
+
+                <div class="upgrade-card">
+                    <div class="upgrade-content">
+                        <div class="upgrade-title">购买加油包，随时补充额度</div>
+                        <div class="upgrade-desc">额度不足时随买随用，积分实时到账。</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('creditsModal')">购买加油包</button>
+                </div>
+            </section>
+
+            <!-- Billing -->
+            <section class="content-section" id="billing">
+                <h2 class="section-title">账单记录</h2>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">支付方式</div>
+                        <div class="setting-desc">Visa **** 4242 &nbsp;&nbsp; Exp 08/27</div>
+                    </div>
+                    <button class="btn btn-outline btn-sm">更新</button>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">账单地区</div>
+                        <div class="setting-desc">United States</div>
+                    </div>
+                    <button class="btn btn-outline btn-sm">更新</button>
+                </div>
+
+                <div class="billing-hint">
+                    账单地址用于支付验证和安全保障。
+                </div>
+
+                <div class="section-divider"></div>
+
+                <h3 class="subsection-title">账单明细</h3>
+
+                <div class="tab-inline">
+                    <button class="tab-inline-btn active" data-subtab="subscription-records">订阅记录</button>
+                    <button class="tab-inline-btn" data-subtab="credit-records">加油包记录</button>
+                </div>
+                
+                <div class="subtab-content active" id="subscription-records">
+                    <table class="session-table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>描述</th>
+                                <th>金额</th>
+                                <th>状态</th>
+                                <th>订单收据</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2025-12-22</td>
+                                <td>Pro Plan - Monthly</td>
+                                <td>$13.00</td>
+                                <td><span class="status-text danger">支付失败</span></td>
+                                <td><a href="#" class="link-text">重试</a></td>
+                            </tr>
+                            <tr>
+                                <td>2025-11-22</td>
+                                <td>Pro Plan - Monthly</td>
+                                <td>$13.00</td>
+                                <td><span class="status-text success">已支付</span></td>
+                                <td><a href="#" class="link-text">下载</a></td>
+                            </tr>
+                            <tr>
+                                <td>2025-10-22</td>
+                                <td>Pro Plan - Monthly</td>
+                                <td>$13.00</td>
+                                <td><span class="status-text success">已支付</span></td>
+                                <td><a href="#" class="link-text">下载</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="subtab-content" id="credit-records">
+                    <table class="session-table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>描述</th>
+                                <th>金额</th>
+                                <th>状态</th>
+                                <th>订单收据</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2025-12-15</td>
+                                <td>Credit Pack - Popular</td>
+                                <td>$28.00</td>
+                                <td><span class="status-text success">已支付</span></td>
+                                <td><a href="#" class="link-text">下载</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Referrals -->
+            <section class="content-section" id="referrals">
+                <h2 class="section-title">联盟记录</h2>
+                
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">您的邀请链接</div>
+                        <div class="setting-desc">分享给好友订阅，获得联盟奖励。<a href="#" class="link-text">点击查看详情</a></div>
+                    </div>
+                </div>
+
+                <div class="invite-link-box">
+                    <span class="invite-link-text">https://applet.gemgen.vip/login?mode=register&id=938197305</span>
+                    <button class="btn btn-outline btn-sm">复制链接</button>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <h3 class="subsection-title">联盟统计</h3>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">点击数</div>
+                        <div class="stat-value">1,234</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">注册数</div>
+                        <div class="stat-value">56</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">订单数</div>
+                        <div class="stat-value">12</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">成功金额</div>
+                        <div class="stat-value">$168.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">预计佣金</div>
+                        <div class="stat-value">$16.80</div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <h3 class="subsection-title">联盟明细</h3>
+                
+                <table class="session-table">
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>被邀请用户</th>
+                            <th>支付金额</th>
+                            <th>联盟比例</th>
+                            <th>联盟激励金额</th>
+                            <th>订单状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2025-12-20</td>
+                            <td>dor***@gmail.com</td>
+                            <td>$13.00</td>
+                            <td>10%</td>
+                            <td>$1.30</td>
+                            <td>已成功</td>
+                        </tr>
+                        <tr>
+                            <td>2025-12-18</td>
+                            <td>joh***@outlook.com</td>
+                            <td>$43.00</td>
+                            <td>10%</td>
+                            <td>$4.30</td>
+                            <td>已成功</td>
+                        </tr>
+                        <tr>
+                            <td>2025-12-15</td>
+                            <td>sar***@yahoo.com</td>
+                            <td>$13.00</td>
+                            <td>10%</td>
+                            <td>$1.30</td>
+                            <td>已取消</td>
+                        </tr>
+                        <tr>
+                            <td>2025-12-10</td>
+                            <td>mic***@gmail.com</td>
+                            <td>$28.00</td>
+                            <td>10%</td>
+                            <td>$2.80</td>
+                            <td>已成功</td>
+                        </tr>
+                        <tr>
+                            <td>2025-12-05</td>
+                            <td>emi***@hotmail.com</td>
+                            <td>$71.00</td>
+                            <td>10%</td>
+                            <td>$7.10</td>
+                            <td>已成功</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="cancel-link">
+                    丰厚奖励，点击 <a href="#">开始联盟奖励结算</a>
+                </div>
+            </section>
+
+            <!-- Promo Codes -->
+            <section class="content-section" id="promo">
+                <h2 class="section-title">联盟优惠码</h2>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">添加联盟优惠码</div>
+                        <div class="setting-desc">创建好友专属优惠码，分享给好友让他们享受到专属优惠。</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('promoModal')">+ 添加联盟优惠码</button>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <h3 class="subsection-title">联盟优惠码列表</h3>
+                
+                <table class="session-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>优惠码</th>
+                            <th>折扣信息</th>
+                            <th>使用次数</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>FRIEND10</td>
+                            <td>10%</td>
+                            <td>5 / 100</td>
+                            <td>启用</td>
+                            <td class="action-cell">
+                                <button class="more-btn" onclick="toggleDropdown(event)">···</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>SAVE15</td>
+                            <td>15%</td>
+                            <td>12 / 50</td>
+                            <td>启用</td>
+                            <td class="action-cell">
+                                <button class="more-btn" onclick="toggleDropdown(event)">···</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>VIP20</td>
+                            <td>20%</td>
+                            <td>3 / 20</td>
+                            <td>停用</td>
+                            <td class="action-cell">
+                                <button class="more-btn" onclick="toggleDropdown(event)">···</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Help Center -->
+            <section class="content-section" id="help">
+                <h2 class="section-title">帮助中心</h2>
+                
+                <div class="setting-row clickable" onclick="window.open('#', '_blank')">
+                    <div class="setting-info">
+                        <div class="setting-label">在线支持</div>
+                        <div class="setting-desc">在线智能支持，通常 1 分钟内响应</div>
+                    </div>
+                    <div class="arrow-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="setting-row clickable" onclick="window.open('#', '_blank')">
+                    <div class="setting-info">
+                        <div class="setting-label">产品文档</div>
+                        <div class="setting-desc">了解如何使用 GemgenAI 的各项功能</div>
+                    </div>
+                    <div class="arrow-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="setting-row clickable" onclick="window.open('#', '_blank')">
+                    <div class="setting-info">
+                        <div class="setting-label">视频教程</div>
+                        <div class="setting-desc">手把手视频指南</div>
+                    </div>
+                    <div class="arrow-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="setting-row clickable" onclick="window.open('#', '_blank')">
+                    <div class="setting-info">
+                        <div class="setting-label">常见问题</div>
+                        <div class="setting-desc">查看常见问题解答</div>
+                    </div>
+                    <div class="arrow-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Language & Timezone -->
+            <section class="content-section" id="language">
+                <h2 class="section-title">语言与时区</h2>
+                
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">语言</div>
+                    </div>
+                    <div class="setting-value">
+                        English
+                        <button class="btn btn-outline btn-sm">更改</button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">时区</div>
+                    </div>
+                    <div class="setting-value">
+                        (UTC-8) Pacific Time
+                        <button class="btn btn-outline btn-sm">更改</button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">日期格式</div>
+                    </div>
+                    <div class="setting-value">
+                        MM/DD/YYYY
+                        <button class="btn btn-outline btn-sm">更改</button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">货币</div>
+                    </div>
+                    <div class="setting-value">
+                        USD ($)
+                        <button class="btn btn-outline btn-sm">更改</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notifications -->
+            <section class="content-section" id="notifications">
+                <h2 class="section-title">通知偏好</h2>
+
+                <h3 class="subsection-title">邮件通知</h3>
+                
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">产品更新</div>
+                        <div class="setting-desc">接收新功能和改进通知</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">营销推广</div>
+                        <div class="setting-desc">接收优惠和活动信息</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">账单提醒</div>
+                        <div class="setting-desc">接收付款和续费提醒</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="billing-hint">
+                    为确保服务不中断，账单相关通知无法完全关闭。
+                </div>
+            </section>
+
+            <!-- Privacy & Data -->
+            <section class="content-section" id="privacy">
+                <h2 class="section-title">隐私与数据</h2>
+                
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-label">导出我的数据</div>
+                        <div class="setting-desc">下载您的所有数据副本。</div>
+                    </div>
+                    <button class="btn btn-outline">请求导出</button>
+                </div>
+
+                <div class="billing-hint">
+                    数据导出请求将在 15 个工作日内处理完成。
+                </div>
+
+                <div class="danger-link">
+                    要删除您的账户，请先取消您的订阅。<a href="#">删除账户</a>
+                </div>
+            </section>
+
+            <!-- Legal -->
+            <section class="content-section" id="legal">
+                <h2 class="section-title">法律条款</h2>
+                
+                <div class="setting-row clickable" onclick="window.open('#', '_blank')">
+                    <div class="setting-info">
+                        <div class="setting-label">服务条款</div>
+                        <div class="setting-desc">查看我们的服务条款</div>
+                    </div>
+                    <div class="arrow-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="setting-row clickable" onclick="window.open('#', '_blank')">
+                    <div class="setting-info">
+                        <div class="setting-label">隐私政策</div>
+                        <div class="setting-desc">了解我们如何保护您的数据</div>
+                    </div>
+                    <div class="arrow-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="setting-row clickable" onclick="window.open('#', '_blank')">
+                    <div class="setting-info">
+                        <div class="setting-label">Cookie 政策</div>
+                        <div class="setting-desc">了解我们如何使用 Cookie</div>
+                    </div>
+                    <div class="arrow-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Change Plan Modal -->
+    <div class="modal-overlay" id="planModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <div class="modal-title">选择版本并确认订单</div>
+                <button class="modal-close" onclick="closeModal('planModal')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="plan-toggle">
+                    <button class="plan-toggle-btn active" data-period="monthly">月度订阅</button>
+                    <button class="plan-toggle-btn" data-period="yearly">年度订阅</button>
+                </div>
+
+                <div class="plan-period-hint" id="yearlyHint" style="display: none;">
+                    年度订阅立享额外折扣，合计赠送 2 个月额度。
+                </div>
+
+                <div class="plan-cards" id="monthlyPlans">
+                    <div class="plan-card selected">
+                        <span class="plan-card-badge">最受欢迎</span>
+                        <div class="plan-card-name">专业版</div>
+                        <div class="plan-card-tagline">为高需求创作者准备的多模型工作台</div>
+                        <div class="plan-card-price">$13 <span>每月</span></div>
+                        <div class="plan-card-value">满足多渠道投放与多成员协作</div>
+                        <ul class="plan-card-features">
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                AI 视频分析 200 分钟 / 月
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                AI 对话分析 500 万 token
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                账号自动监测数量 5 个
+                            </li>
+                        </ul>
+                        <div class="plan-card-footer">按月灵活使用，随时扩容</div>
+                    </div>
+
+                    <div class="plan-card">
+                        <div class="plan-card-name">商业版</div>
+                        <div class="plan-card-tagline">跨团队部署与企业级安全治理</div>
+                        <div class="plan-card-price">$43 <span>每月</span></div>
+                        <div class="plan-card-value">品牌团队与大型项目的一体化解决方案</div>
+                        <ul class="plan-card-features">
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                AI 视频分析 300 分钟 / 月
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                AI 对话分析 500 万 token
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                账号自动监测数量 8 个
+                            </li>
+                        </ul>
+                        <div class="plan-card-footer">支持白标与高级治理，可随时扩展</div>
+                    </div>
+                </div>
+
+                <div class="plan-cards" id="yearlyPlans" style="display: none;">
+                    <div class="plan-card selected">
+                        <span class="plan-card-badge">最受欢迎</span>
+                        <div class="plan-card-name">专业版</div>
+                        <div class="plan-card-tagline">为高需求创作者准备的多模型工作台</div>
+                        <div class="plan-card-price">$138 <span>每年</span></div>
+                        <div class="plan-card-savings">立省 $18 · 送 2 个月</div>
+                        <div class="plan-card-value">长期增长团队的高性价比选择</div>
+                        <ul class="plan-card-features">
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                AI 视频分析 300 分钟 / 月
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                AI 对话分析 500 万 token
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                账号自动监测数量 8 个
+                            </li>
+                        </ul>
+                        <div class="plan-card-footer">推荐年付，平摊至每月仅 $11</div>
+                    </div>
+
+                    <div class="plan-card">
+                        <div class="plan-card-name">商业版</div>
+                        <div class="plan-card-tagline">跨团队部署与企业级安全治理</div>
+                        <div class="plan-card-price">$459 <span>每年</span></div>
+                        <div class="plan-card-savings">立省 $57 · 送 2 个月</div>
+                        <div class="plan-card-value">企业数字化团队的旗舰组合</div>
+                        <ul class="plan-card-features">
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                AI 视频分析 1000 分钟 / 月
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                AI 对话分析 10000 万 token
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                账号自动监测数量 10 个
+                            </li>
+                        </ul>
+                        <div class="plan-card-footer">提供企业级顾问支持与部署陪伴</div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 24px;">
+                    <label class="form-label">优惠码（可选）</label>
+                    <input type="text" class="form-input" placeholder="请输入或粘贴优惠码">
+                    <p class="form-hint">如有优惠码，请输入或粘贴后自动验证</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('planModal')">取消</button>
+                <button class="btn btn-primary">确认订单</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buy Credits Modal -->
+    <div class="modal-overlay" id="creditsModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <div class="modal-title">购买加油包</div>
+                <button class="modal-close" onclick="closeModal('creditsModal')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="credits-hero">
+                    <div class="credits-hero-title">积分加油站 · 随需扩容</div>
+                    <div class="credits-hero-desc">额度不足时随买随用，积分实时到账，补充 AI 任务与算力资源。</div>
+                </div>
+
+                <div class="credits-benefits">
+                    <div class="credits-benefit-item">✓ 灵活：按量补充无浪费</div>
+                    <div class="credits-benefit-item">✓ 即时：购买后即刻到账，峰值时段也能保持工作流不停机</div>
+                    <div class="credits-benefit-item">✓ 划算：积分永久有效，仅为实际使用付费</div>
+                </div>
+
+                <div class="credit-cards">
+                    <div class="credit-card">
+                        <div class="credit-card-header">
+                            <div class="credit-card-name">体验包</div>
+                            <div class="credit-card-price">$8</div>
+                        </div>
+                        <div class="credit-card-credits">25,000 积分</div>
+                        <div class="credit-card-estimate">≈ 62 分钟视频分析</div>
+                        <button class="btn btn-primary btn-sm credit-card-btn">立即充值</button>
+                    </div>
+
+                    <div class="credit-card selected">
+                        <div class="credit-card-tag">最受欢迎</div>
+                        <div class="credit-card-header">
+                            <div class="credit-card-name">畅享包</div>
+                            <div class="credit-card-price">$28</div>
+                        </div>
+                        <div class="credit-card-credits">92,000 积分</div>
+                        <div class="credit-card-bonus">额外加赠 10%</div>
+                        <div class="credit-card-estimate">≈ 230 分钟视频分析</div>
+                        <button class="btn btn-primary btn-sm credit-card-btn">立即充值</button>
+                    </div>
+
+                    <div class="credit-card">
+                        <div class="credit-card-header">
+                            <div class="credit-card-name">尊享包</div>
+                            <div class="credit-card-price">$71</div>
+                        </div>
+                        <div class="credit-card-credits">252,000 积分</div>
+                        <div class="credit-card-bonus">额外加赠 20%</div>
+                        <div class="credit-card-estimate">≈ 630 分钟视频分析</div>
+                        <button class="btn btn-primary btn-sm credit-card-btn">立即充值</button>
+                    </div>
+                </div>
+
+                <div class="credits-lookup">
+                    <div class="credits-lookup-title">积分消耗速查</div>
+                    <div class="credits-lookup-item">AI 视频分析：400 积分 / 每分钟</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('creditsModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Promo Code Modal -->
+    <div class="modal-overlay" id="promoModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">添加联盟优惠码</div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">折扣比例 *</label>
+                    <div style="display: flex; gap: 16px;">
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer;">
+                            <input type="radio" name="discount" value="10" checked> 10%
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer;">
+                            <input type="radio" name="discount" value="15"> 15%
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer;">
+                            <input type="radio" name="discount" value="20"> 20%
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">许可使用次数 *</label>
+                    <input type="number" class="form-input" value="0" min="0">
+                    <p class="form-hint">0 表示不限制使用次数</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">过期时间</label>
+                    <input type="date" class="form-input">
+                    <p class="form-hint">不选择表示不过期</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">状态 *</label>
+                    <div style="display: flex; gap: 16px;">
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer;">
+                            <input type="radio" name="status" value="active" checked> 启用
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer;">
+                            <input type="radio" name="status" value="inactive"> 停用
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('promoModal')">取消</button>
+                <button class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Promo Action Modal -->
+    <div class="dropdown-menu" id="promoActionDropdown" style="display: none;">
+        <div class="dropdown-item" onclick="closeDropdown()">启用</div>
+        <div class="dropdown-item" onclick="closeDropdown()">删除</div>
+    </div>
+
+    <script>
+        // Tab切换
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                // 更新导航状态
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                // 更新内容区
+                const tabId = link.dataset.tab;
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // 内联Tab切换
+        document.querySelectorAll('.tab-inline-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const parent = btn.closest('.content-section');
+                parent.querySelectorAll('.tab-inline-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const subtabId = btn.dataset.subtab;
+                parent.querySelectorAll('.subtab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(subtabId).classList.add('active');
+            });
+        });
+
+        // 下拉菜单
+        let currentDropdown = null;
+
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            const btn = event.currentTarget;
+            const cell = btn.closest('.action-cell');
+            
+            // 关闭已有的下拉菜单
+            if (currentDropdown) {
+                currentDropdown.remove();
+                currentDropdown = null;
+            }
+
+            // 创建下拉菜单
+            const dropdown = document.createElement('div');
+            dropdown.className = 'dropdown-menu';
+            dropdown.innerHTML = `
+                <div class="dropdown-item" onclick="closeDropdown()">启用</div>
+                <div class="dropdown-item" onclick="closeDropdown()">删除</div>
+            `;
+            
+            cell.appendChild(dropdown);
+            currentDropdown = dropdown;
+        }
+
+        function closeDropdown() {
+            if (currentDropdown) {
+                currentDropdown.remove();
+                currentDropdown = null;
+            }
+        }
+
+        // 点击页面其他地方关闭下拉菜单
+        document.addEventListener('click', closeDropdown);
+
+        // 套餐月度/年度切换
+        document.querySelectorAll('.plan-toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.plan-toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const period = btn.dataset.period;
+                const monthlyPlans = document.getElementById('monthlyPlans');
+                const yearlyPlans = document.getElementById('yearlyPlans');
+                const yearlyHint = document.getElementById('yearlyHint');
+                
+                if (period === 'yearly') {
+                    monthlyPlans.style.display = 'none';
+                    yearlyPlans.style.display = 'flex';
+                    yearlyHint.style.display = 'block';
+                } else {
+                    monthlyPlans.style.display = 'flex';
+                    yearlyPlans.style.display = 'none';
+                    yearlyHint.style.display = 'none';
+                }
+            });
+        });
+
+        // 套餐周期切换
+        document.querySelectorAll('.plan-toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.parentElement.querySelectorAll('.plan-toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // 套餐卡片选择
+        document.querySelectorAll('.plan-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.parentElement.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+            });
+        });
+
+        // 积分包选择
+        document.querySelectorAll('.credit-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.parentElement.querySelectorAll('.credit-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+            });
+        });
+
+        // 弹窗控制
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 点击遮罩关闭弹窗
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // ESC关闭弹窗
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                document.body.style.overflow = '';
+            }
+        });
+    </script>
+</body>
+</html>
